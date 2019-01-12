@@ -1,0 +1,53 @@
+newmtl white
+Ka 1.000 1.000 1.000    # white abient color
+Kd 1.000 1.000 1.000    # white diffuse color
+Ks 0.000 0.000 0.000    # black (off) specular color
+Ns 100.000              # ranges between 0 and 1000
+d 0.9                   # 0-1 transparency
+#Tr 0.1                 # use if d doesn't work
+illum 2
+
+newmtl blue
+Ka 0.000 0.000 1.000    # white abient color
+Kd 0.000 0.000 1.000    # white diffuse color
+Ks 0.000 0.000 0.000    # black (off) specular color
+Ns 100.000              # ranges between 0 and 1000
+d 0.9                   # 0-1 transparency
+#Tr 0.1                 # use if d doesn't work
+illum 2
+
+newmtl black
+Ka 0.100 0.100 0.100    # white abient color
+Kd 0.100 0.100 0.100    # white diffuse color
+Ks 0.000 0.000 0.000    # black (off) specular color
+Ns 100.000              # ranges between 0 and 1000
+d 0.5                   # 0-1 transparency
+#Tr 0.1                 # use if d doesn't work
+illum 2
+
+newmtl red
+Ka 1.000 0.000 0.000    # white abient color
+Kd 1.000 0.000 0.000    # white diffuse color
+Ks 0.000 0.000 0.000    # black (off) specular color
+Ns 100.000              # ranges between 0 and 1000
+d 0.9                   # 0-1 transparency
+#Tr 0.1                 # use if d doesn't work
+illum 2 
+
+newmtl green
+Ka 0.000 1.000 0.000    # white abient color
+Kd 0.000 1.000 0.000    # white diffuse color
+Ks 0.000 0.000 0.000    # black (off) specular color
+Ns 100.000              # ranges between 0 and 1000
+d 0.9                   # 0-1 transparency
+#Tr 0.1                 # use if d doesn't work
+illum 2
+
+newmtl cyan
+Ka 0.000 1.000 1.000    # white abient color
+Kd 0.000 1.000 1.000    # white diffuse color
+Ks 0.000 0.000 0.000    # black (off) specular color
+Ns 100.000              # ranges between 0 and 1000
+d 0.9                   # 0-1 transparency
+#Tr 0.1                 # use if d doesn't work
+illum 2

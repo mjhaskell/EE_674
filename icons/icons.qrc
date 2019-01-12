@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/myicons">
+	<file>start.png</file>
+	<file>drone.png</file>
+	<file>check.png</file>
+	<file>red_x.jpg</file>
+	<file>ros.png</file>
+	<file>reset.png</file>
+	<file>pause.png</file>
+	<file>controller.png</file>
+    </qresource>
+</RCC>
