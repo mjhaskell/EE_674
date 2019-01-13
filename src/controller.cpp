@@ -25,8 +25,8 @@ Controller::Controller()
     this->linearizeAboutCurrentAttitude();
     this->InitializeSolverParams();
     this->setSolverSettings();
-    set_defaults();
-    setup_indexing();
+//    set_defaults();
+//    setup_indexing();
 }
 
 Controller::~Controller()
@@ -37,8 +37,8 @@ dyn::uVec Controller::calculateControl()
 {
     this->updateSolverParams();
 
-    int num_iters;
-    num_iters = solve();
+//    int num_iters;
+//    num_iters = solve();
 
     dyn::uVec inputs{0,0,0,0};
     return inputs;
@@ -107,7 +107,7 @@ void Controller::initializeB()
 
 void Controller::setSolverX0()
 {
-    for (int i{0};i < dyn::STATE_SIZE;i++)
+//    for (int i{0};i < dyn::STATE_SIZE;i++)
 //        params.x_0[i] = m_x[i];
 }
 
@@ -144,21 +144,21 @@ void Controller::setSolverStateWeights(bool final)
 
 void Controller::setSolverInputWeights()
 {
-    for (int i{0};i < dyn::INPUT_SIZE;i++)
+//    for (int i{0};i < dyn::INPUT_SIZE;i++)
 //        params.Wu[i] = m_input_weights[i];
 }
 
 void Controller::setSolverA()
 {
-    for (int j{0};j < m_Ad.cols();j++)
-        for (int i{0};i < m_Ad.rows();i++)
+//    for (int j{0};j < m_Ad.cols();j++)
+//        for (int i{0};i < m_Ad.rows();i++)
 //            params.A[i+j*m_Ad.rows()] = m_Ad(i,j);
 }
 
 void Controller::setSolverB()
 {
-    for (int j{0};j < m_Bd.cols();j++)
-        for (int i{0};i < m_Bd.rows();i++)
+//    for (int j{0};j < m_Bd.cols();j++)
+//        for (int i{0};i < m_Bd.rows();i++)
 //            params.B[i+j*m_Bd.rows()] = m_Bd(i,j);
 }
 

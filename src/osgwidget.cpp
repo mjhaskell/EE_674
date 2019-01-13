@@ -624,7 +624,7 @@ osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createDrone(double bound
 
 osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createCastle(double bounding_radius)
 {
-    osg::ref_ptr<osg::Node> model{createModel("../obj/castle.obj")};
+    osg::ref_ptr<osg::Node> model{createModel(":obj/castle.obj")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,-0.1*bounding_radius};
     osg::ref_ptr<osg::Node> translated_model{translateModel(scaled_model,cog_offset)};

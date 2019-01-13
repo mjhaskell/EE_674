@@ -1,28 +1,49 @@
 cmake_minimum_required(VERSION 3.4)
 project(fixedwing_sim)
 
-#IF (NOT TARGET gtest)
-#    # Prevent GoogleTest from overriding our compiler/linker options
-#    # when building with Visual Studio
-#    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-#    add_subdirectory(libs/googletest)
-#ENDIF()
+macro(configure_files srcDir destDir)
+    message(STATUS "Configuring directory ${destDir}")
+    make_directory(${destDir})
+
+    file(GLOB templateFiles RELATIVE ${srcDir} ${srcDir}/*)
+    foreach(templateFile ${templateFiles})
+        set(srcTemplatePath ${srcDir}/${templateFile})
+        if(NOT IS_DIRECTORY ${srcTemplatePath})
+            message(STATUS "Configuring file ${templateFile}")
+            configure_file(
+                    ${srcTemplatePath}
+                    ${destDir}/${templateFile}
+                    @ONLY)
+        endif(NOT IS_DIRECTORY ${srcTemplatePath})
+    endforeach(templateFile)
+endmacro(configure_files)
 
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
 find_package(catkin REQUIRED COMPONENTS qt_build roscpp)
-#find_package(Eigen3 REQUIRED)
+find_package(OpenSceneGraph REQUIRED COMPONENTS
+    osgDB
+    osgGA
+    osgUtil
+    osgViewer
+    osgText
+    )
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${Qt5Widgets_INCLUDE_DIRS})
-include_directories(${Qt5Core_INCLUDE_DIRS})
-include_directories(${catkin_INCLUDE_DIRS})
-include_directories(/usr/local/include/eigen3)
-include_directories(include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt5Core_INCLUDE_DIRS}
+    ${catkin_INCLUDE_DIRS}
+    ${OPENSCENEGRAPH_INCLUDE_DIRS}
+    /usr/local/include/eigen3
+    include
+    )
 
 catkin_package()
+
+#file(COPY test.txt DESTINATION build/devel/lib/fixedwing_sim/)
+configure_files(obj build/devel/lib/fixedwing_sim/obj)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 1)
@@ -33,21 +54,23 @@ set(CMAKE_AUTORCC ON)
 
 file(GLOB_RECURSE MYSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 file(GLOB MYFORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
-file(GLOB MYRESOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} icons/*.qrc)
+file(GLOB MYICONS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} icons/*.qrc)
+file(GLOB MYOBJ RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} obj/*.qrc)
 file(GLOB_RECURSE MYMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp)
 
-#QT5_ADD_RESOURCES(QT_RESOURCES_CPP ${MYRESOURCES})
+#QT5_ADD_RESOURCES(QT_RESOURCES_CPP ${MYICONS})
 QT5_WRAP_UI(QT_FORMS_HPP ${MYFORMS})
 #QT5_WRAP_CPP(QT_MOC_HPP ${MYMOC})
 
 set(TEST_NAME ${PROJECT_NAME}_UnitTest)
 
-#set( MYRESOURCES resources/images.qrc)
+#set( MYICONS resources/images.qrc)
 
 
 add_executable(${PROJECT_NAME}
    ${MYSOURCE}
-   ${MYRESOURCES}
+   ${MYICONS}
+   ${MYOBJ}
    ${MYMOC}
    ${QT_FORMS_HPP}
    )
@@ -55,10 +78,13 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     ${QT_LIBRARIES}
     ${catkin_LIBRARIES}
+    ${OPENSCENEGRAPH_LIBRARIES}
     ${eigen3_LIBRARIES}
     Qt5::Widgets
     Qt5::Gui
     Qt5::Core
+    gtest
+    gtest_main
     )
 
 install(TARGETS fixedwing_sim RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
