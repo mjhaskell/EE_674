@@ -1,23 +1,6 @@
 cmake_minimum_required(VERSION 3.4)
 project(fixedwing_sim)
 
-macro(configure_files srcDir destDir)
-    message(STATUS "Configuring directory ${destDir}")
-    make_directory(${destDir})
-
-    file(GLOB templateFiles RELATIVE ${srcDir} ${srcDir}/*)
-    foreach(templateFile ${templateFiles})
-        set(srcTemplatePath ${srcDir}/${templateFile})
-        if(NOT IS_DIRECTORY ${srcTemplatePath})
-            message(STATUS "Configuring file ${templateFile}")
-            configure_file(
-                    ${srcTemplatePath}
-                    ${destDir}/${templateFile}
-                    @ONLY)
-        endif(NOT IS_DIRECTORY ${srcTemplatePath})
-    endforeach(templateFile)
-endmacro(configure_files)
-
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
@@ -42,8 +25,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 catkin_package()
 
-#file(COPY test.txt DESTINATION build/devel/lib/fixedwing_sim/)
-configure_files(obj build/devel/lib/fixedwing_sim/obj)
+file(COPY obj DESTINATION devel/lib/fixedwing_sim)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 1)
@@ -55,17 +37,13 @@ set(CMAKE_AUTORCC ON)
 file(GLOB_RECURSE MYSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 file(GLOB MYFORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
 file(GLOB MYICONS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} icons/*.qrc)
-file(GLOB MYOBJ RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} obj/*.qrc)
 file(GLOB_RECURSE MYMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp)
 
 #QT5_ADD_RESOURCES(QT_RESOURCES_CPP ${MYICONS})
 QT5_WRAP_UI(QT_FORMS_HPP ${MYFORMS})
 #QT5_WRAP_CPP(QT_MOC_HPP ${MYMOC})
 
-set(TEST_NAME ${PROJECT_NAME}_UnitTest)
-
-#set( MYICONS resources/images.qrc)
-
+set(TEST_NAME ${PROJECT_NAME}_UnitTest) 
 
 add_executable(${PROJECT_NAME}
    ${MYSOURCE}

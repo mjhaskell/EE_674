@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/obj">
-	<file>castle.obj</file>
-    </qresource>
-</RCC>

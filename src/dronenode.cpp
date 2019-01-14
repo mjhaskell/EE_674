@@ -188,7 +188,8 @@ void DroneNode::updateDynamics()
     m_odom.twist.twist.angular.y = m_states(dyn::WY);
     m_odom.twist.twist.angular.z = m_states(dyn::WZ);
 
-    m_odom.header.stamp = ros::Time::now();
+    if (m_use_ros)
+        m_odom.header.stamp = ros::Time::now();
 }
 
 void DroneNode::stateCallback(const nav_msgs::OdometryConstPtr& msg)
