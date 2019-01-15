@@ -31,21 +31,22 @@ OSGWidget::OSGWidget(QWidget* parent,Qt::WindowFlags flags):
     m_graphics_window{new osgViewer::GraphicsWindowEmbedded{this->x(),this->y(),this->width(),this->height()}},
     m_viewer{new osgViewer::CompositeViewer},
     m_view{new osgViewer::View},
-    m_manipulator{new osgGA::KeySwitchMatrixManipulator},
-    m_custom_manipulator{new osgGA::TrackballManipulator},
-    m_tracker_manipulator{new osgGA::NodeTrackerManipulator},
+    m_manipulator{new osgGA::NodeTrackerManipulator},
     m_root{new osg::Group},
-    m_drone_update_callback{new DroneUpdateCallback{m_custom_manipulator}}
+    m_drone_update_callback{new DroneUpdateCallback}
 {
-    this->setupManipulators();
     this->setupCameraAndView();
     this->setupEnvironment();
 
-    double drone_radius{0.3};
-    osg::ref_ptr<osg::PositionAttitudeTransform> drone_pat{this->createDrone(drone_radius)};
-    drone_pat->addUpdateCallback(m_drone_update_callback);
+    double drone_radius{1.0};
+    osg::ref_ptr<osg::PositionAttitudeTransform> drone_pat{new osg::PositionAttitudeTransform};
+    drone_pat->setUpdateCallback(m_drone_update_callback);
+    osg::ref_ptr<osg::PositionAttitudeTransform> drone_node{this->createDrone(drone_radius)};
+    drone_pat->addChild(drone_node);
     m_root->addChild(drone_pat);
-    m_tracker_manipulator->setTrackNode(drone_pat);
+
+    this->setupManipulators(drone_node.get());
+//    m_manipulator->setTrackNode(drone_pat);
 
     this->setFocusPolicy(Qt::StrongFocus);
     this->setMouseTracking(true);
@@ -234,24 +235,21 @@ osgGA::EventQueue* OSGWidget::getEventQueue() const
         throw std::runtime_error("Unable to obtain valid event queue");
 }
 
-void OSGWidget::setupManipulators()
+void OSGWidget::setupManipulators(osg::ref_ptr<osg::PositionAttitudeTransform> track_node)
 {
-    m_custom_manipulator->setAllowThrow(false);
-    m_tracker_manipulator->setAllowThrow(false);
+    m_manipulator->setAllowThrow(false);
 
     osgGA::NodeTrackerManipulator::TrackerMode track_mode{osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM};
-    m_tracker_manipulator->setTrackerMode(track_mode);
+    m_manipulator->setTrackerMode(track_mode);
     osgGA::NodeTrackerManipulator::RotationMode rot_mode{osgGA::NodeTrackerManipulator::TRACKBALL};
-    m_tracker_manipulator->setRotationMode(rot_mode);
+    m_manipulator->setRotationMode(rot_mode);
 
-    osg::Vec3d eye{-5.0,0,-1.0};
+    osg::Vec3d eye{-5.0,0,1.0};
     osg::Vec3d center{0,0,0};
-    osg::Vec3d up{0,0,-1};
-    m_custom_manipulator->setHomePosition(eye,center,up);
-    m_tracker_manipulator->setHomePosition(eye,center,up);
-
-    m_manipulator->addMatrixManipulator('1',"Custom",m_custom_manipulator);
-    m_manipulator->addMatrixManipulator('2',"Tracker",m_tracker_manipulator);
+    osg::Vec3d up{0,0,1};
+    m_manipulator->setHomePosition(eye,center,up);
+    m_manipulator->setTrackNode(track_node);
+    m_view->setCameraManipulator(m_manipulator);
 }
 
 bool OSGWidget::event(QEvent *event)
@@ -304,11 +302,11 @@ void OSGWidget::setupView(osg::Camera* camera)
     m_view->setCamera(camera);
     m_view->setSceneData(m_root.get());
     m_view->addEventHandler(new osgViewer::StatsHandler);
-    m_view->setCameraManipulator(m_manipulator);
+//    m_view->setCameraManipulator(m_manipulator);
     m_view->home();
     m_view->setLightingMode(osg::View::SKY_LIGHT);
     osg::Light *light{m_view->getLight()};
-    osg::Vec4 light_pos{0,0,-100,0};
+    osg::Vec4 light_pos{0,0,10,0};
     light->setPosition(light_pos);
 }
 
@@ -376,7 +374,6 @@ osg::Geometry* createFloorGeom()
     osg::ref_ptr<osg::Vec2Array> tex_coords{getTexCoords(repetions)};
     geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
     geom->setTexCoordArray(0, tex_coords.get());
-    osgUtil::SmoothingVisitor::smooth(*geom);
     geom->setTexCoordArray(0, tex_coords.get(), osg::Array::Binding::BIND_PER_VERTEX);
 
     return geom;
@@ -409,7 +406,7 @@ osg::Geometry* getOriginAxis(int x,int y,int z)
     osg::Vec3Array* v{new osg::Vec3Array};
     v->resize(2);
     (*v)[0].set(0, 0, 0);
-    (*v)[1].set(x, y, z);
+    (*v)[1].set(x, -y, -z);
 
     osg::Geometry* geom{new osg::Geometry};
     geom->setUseDisplayList(false);
@@ -479,15 +476,15 @@ void OSGWidget::insertClouds()
     int num_clouds{9};
     osg::ref_ptr<osg::PositionAttitudeTransform> cloud_pat[num_clouds];
     osg::Vec3d cloud_pos[num_clouds];
-    cloud_pos[0] = osg::Vec3d{-200,-150,-150};
-    cloud_pos[1] = osg::Vec3d{-150,150,-140};
-    cloud_pos[2] = osg::Vec3d{150,-150,-160};
-    cloud_pos[3] = osg::Vec3d{150,150,-170};
-    cloud_pos[4] = osg::Vec3d{-100,-50,-140};
-    cloud_pos[5] = osg::Vec3d{50,200,-150};
-    cloud_pos[6] = osg::Vec3d{250,0,-130};
-    cloud_pos[7] = osg::Vec3d{0,-250,-160};
-    cloud_pos[8] = osg::Vec3d{0,0,-170};
+    cloud_pos[0] = osg::Vec3d{-200,-150,150};
+    cloud_pos[1] = osg::Vec3d{-150,150,140};
+    cloud_pos[2] = osg::Vec3d{150,-150,160};
+    cloud_pos[3] = osg::Vec3d{150,150,170};
+    cloud_pos[4] = osg::Vec3d{-100,-50,140};
+    cloud_pos[5] = osg::Vec3d{50,200,150};
+    cloud_pos[6] = osg::Vec3d{250,0,130};
+    cloud_pos[7] = osg::Vec3d{0,-250,160};
+    cloud_pos[8] = osg::Vec3d{0,0,170};
     for (int i{0}; i < num_clouds; i++)
     {
         cloud_pat[i] = new osg::PositionAttitudeTransform;
@@ -553,10 +550,10 @@ void OSGWidget::insertTrees()
 void OSGWidget::setupEnvironment()
 {
     insertGround();
-    insertStructures();
+//    insertStructures();
     insertClouds();
-    insertPinetrees();
-    insertTrees();
+//    insertPinetrees();
+//    insertTrees();
 }
 
 osg::ref_ptr<osg::Node> scaleModel(const osg::ref_ptr<osg::Node> &model, double bounding_radius)
@@ -606,16 +603,16 @@ osg::ref_ptr<osg::Node> createModel(std::string name)
 
 osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createDrone(double bounding_radius)
 {
-    osg::ref_ptr<osg::Node> model{createModel("obj/simple_drone.obj")};
+    osg::ref_ptr<osg::Node> model{createModel("obj/jet_fighter.obj")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
-    osg::Vec3d cog_offset{0,-0.02,0};
+    osg::Vec3d cog_offset{0,-0.075*bounding_radius,0.075*bounding_radius};
     osg::ref_ptr<osg::Node> translated_model{translateModel(scaled_model,cog_offset)};
     double angle{osg::DegreesToRadians(90.0)};
-    osg::Vec3d axis1{1,0,0};
+    osg::Vec3d axis1{0,1,0};
     osg::Vec3d axis2{0,0,1};
     osg::Quat q1{angle,axis1};
     osg::Quat q2{angle,axis2};
-    osg::ref_ptr<osg::Node> rotated_model{rotateModel(translated_model,q1*q2)};
+    osg::ref_ptr<osg::Node> rotated_model{rotateModel(translated_model,q2)};
     osg::ref_ptr<osg::PositionAttitudeTransform> drone_at_origin{new osg::PositionAttitudeTransform};
     drone_at_origin->addChild(rotated_model);
 

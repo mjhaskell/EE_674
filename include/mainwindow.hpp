@@ -6,6 +6,8 @@
 #include "controllernode.hpp"
 #include <QProcess>
 
+#include "nav_msgs/Odometry.h"
+
 namespace Ui
 {
 class MainWindow;
@@ -20,6 +22,9 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(int argc,char** argv,QWidget *parent = nullptr);
     ~MainWindow();
+
+signals:
+    void slidersChanged(nav_msgs::Odometry* odom);
 
 protected:
     void setupSignalsAndSlots();
@@ -42,6 +47,7 @@ protected:
     QAction* createControllerPanelAction();
     void populateTopicsComboBox();
     void onToolbarVisibilityChanged(bool visible);
+    void updatePoseFromSliders();
 
 public slots:
     void closeWithWarning();
@@ -68,13 +74,25 @@ private slots:
     void on_set_rates_button_clicked();
     void on_pause_triggered();
 
+    void on_north_slider_sliderMoved(int position);
+
+    void on_east_slider_sliderMoved(int position);
+
+    void on_height_slider_sliderMoved(int position);
+
+    void on_roll_slider_sliderMoved(int position);
+
+    void on_pitch_slider_sliderMoved(int position);
+
+    void on_yaw_slider_sliderMoved(int position);
+
 private:
     Ui::MainWindow *m_ui{nullptr};
     OSGWidget *m_osg_widget{nullptr};
     int m_argc;
     char** m_argv;
-    quad::ControllerNode m_controller_node;
-    quad::DroneNode m_drone_node;
+//    quad::ControllerNode m_controller_node;
+//    quad::DroneNode m_drone_node;
     QToolBar *m_main_toolbar{nullptr};
     QProcess *m_process{nullptr};
     bool m_app_started_roscore{false};
@@ -82,6 +100,12 @@ private:
     QIcon m_x_icon{QIcon{":myicons/red_x.jpg"}};
     bool m_use_ros_ip{true};
     bool m_is_running{false};
+    double m_north{0};
+    double m_east{0};
+    double m_height{0};
+    double m_roll{0};
+    double m_pitch{0};
+    double m_yaw{0};
 };
 
 #endif // MAINWINDOW_HPP

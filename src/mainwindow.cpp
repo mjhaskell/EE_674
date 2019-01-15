@@ -8,13 +8,15 @@
 #include <QSettings>
 #include <chrono>
 
+//#include "quat.hpp"
+
 MainWindow::MainWindow(int argc,char** argv,QWidget *parent) :
     QMainWindow(parent),
     m_ui{new Ui::MainWindow},
     m_osg_widget{new OSGWidget},
     m_argc{argc},
     m_argv{argv},
-    m_drone_node{m_argc,m_argv},
+//    m_drone_node{m_argc,m_argv},
     m_process{new QProcess{this}}
 {
     m_ui->setupUi(this);
@@ -51,16 +53,17 @@ MainWindow::~MainWindow()
 void MainWindow::setupSignalsAndSlots()
 {
     connect(m_main_toolbar, &QToolBar::visibilityChanged, this, &MainWindow::onToolbarVisibilityChanged);
-    connect(&m_drone_node, &quad::DroneNode::feedbackStates, &m_controller_node, &quad::ControllerNode::updateStates);
-    connect(&m_controller_node, &quad::ControllerNode::sendInputs, &m_drone_node, &quad::DroneNode::updateInputs);
-    connect(&m_drone_node, &quad::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
-    connect(&m_drone_node, &quad::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
+//    connect(&m_drone_node, &quad::DroneNode::feedbackStates, &m_controller_node, &quad::ControllerNode::updateStates);
+//    connect(&m_controller_node, &quad::ControllerNode::sendInputs, &m_drone_node, &quad::DroneNode::updateInputs);
+//    connect(&m_drone_node, &quad::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
+//    connect(&m_drone_node, &quad::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
+    connect(this, &MainWindow::slidersChanged, m_osg_widget, &OSGWidget::updateDroneStates);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    m_drone_node.stopRunning();
-    m_controller_node.stopRunning();
+//    m_drone_node.stopRunning();
+//    m_controller_node.stopRunning();
     this->writeSettings();
     QMainWindow::closeEvent(event);
 }
@@ -109,10 +112,10 @@ void MainWindow::writeSettings()
 
 void MainWindow::updateRosStatus()
 {
-    if(m_drone_node.rosIsConnected() && ros::master::check())
-        m_ui->connection_label->setPixmap(m_check_icon.pixmap(16,16));
-    else
-        m_ui->connection_label->setPixmap(m_x_icon.pixmap(16,16));
+//    if(m_drone_node.rosIsConnected() && ros::master::check())
+//        m_ui->connection_label->setPixmap(m_check_icon.pixmap(16,16));
+//    else
+//        m_ui->connection_label->setPixmap(m_x_icon.pixmap(16,16));
 }
 
 void MainWindow::startRosCore()
@@ -122,7 +125,7 @@ void MainWindow::startRosCore()
     std::string master_uri{"http://localhost:11311/"};
     std::string host_uri{"localhost"};
     bool use_ros_ip{false};
-    while (!m_drone_node.init(master_uri,host_uri,use_ros_ip)) {}
+//    while (!m_drone_node.init(master_uri,host_uri,use_ros_ip)) {}
     m_app_started_roscore = true;
 }
 
@@ -204,39 +207,52 @@ void MainWindow::startOrPauseSim()
 
 bool MainWindow::startSimulation()
 {   
-    if (!m_drone_node.startNode())
-    {
-        if (m_drone_node.rosIsConnected())
-            this->closeWithWarning();
-        else
-            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),
-                                 tr("Can not start the simulation. Connect to a ros master and try again."));
-        return false;
-    }
-    else
-        m_controller_node.startNode();
-    return true;
+//    if (!m_drone_node.startNode())
+//    {
+//        if (m_drone_node.rosIsConnected())
+//            this->closeWithWarning();
+//        else
+//            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),
+//                                 tr("Can not start the simulation. Connect to a ros master and try again."));
+//        return false;
+//    }
+//    else
+//        m_controller_node.startNode();
+//    return true;
 }
 
 void MainWindow::pauseSimulation()
 {
-    m_drone_node.stopRunning();
-    m_controller_node.stopRunning();
+//    m_drone_node.stopRunning();
+//    m_controller_node.stopRunning();
 }
 
 void MainWindow::resetSimulation()
 {
-    m_is_running = true;
-    m_ui->ros_check_box->setEnabled(true);
-    m_ui->topics_combo_box->setEnabled(true);
-    m_ui->subscribe_button->setEnabled(true);
-    m_ui->scan_button->setEnabled(true);
-    startOrPauseSim();
-    m_drone_node.stopRunning();
-    m_controller_node.stopRunning();
-    m_drone_node.resetNode();
-    m_controller_node.resetNode();
-    m_osg_widget->resetManipulatorView();
+//    m_is_running = true;
+//    m_ui->ros_check_box->setEnabled(true);
+//    m_ui->topics_combo_box->setEnabled(true);
+//    m_ui->subscribe_button->setEnabled(true);
+//    m_ui->scan_button->setEnabled(true);
+//    startOrPauseSim();
+//    m_drone_node.stopRunning();
+//    m_controller_node.stopRunning();
+//    m_drone_node.resetNode();
+//    m_controller_node.resetNode();
+//    m_osg_widget->resetManipulatorView();
+    m_ui->north_slider->setSliderPosition(0);
+    m_ui->east_slider->setSliderPosition(0);
+    m_ui->height_slider->setSliderPosition(0);
+    m_ui->roll_slider->setSliderPosition(0);
+    m_ui->pitch_slider->setSliderPosition(0);
+    m_ui->yaw_slider->setSliderPosition(0);
+    m_north = 0;
+    m_east = 0;
+    m_height = 0;
+    m_roll = 0;
+    m_pitch = 0;
+    m_yaw = 0;
+    this->updatePoseFromSliders();
 }
 
 QAction* MainWindow::createRosPanelAction()
@@ -268,8 +284,8 @@ void MainWindow::on_start_triggered()
 
 void MainWindow::on_close_triggered()
 {
-    m_drone_node.stopRunning();
-    m_controller_node.stopRunning();
+//    m_drone_node.stopRunning();
+//    m_controller_node.stopRunning();
     this->writeSettings();
     close();
 }
@@ -283,36 +299,35 @@ void MainWindow::closeWithWarning()
 
 void MainWindow::on_roscore_button_clicked()
 {
-    if (!m_drone_node.rosIsConnected())
-    {
-        m_ui->master_group->setEnabled(false);
-        m_ui->core_group->setEnabled(false);
-        m_ui->roscore_button->setStatusTip(tr(""));
-        int msg_disp_time{5000};
-        m_ui->statusbar->showMessage(tr("Starting ROS core"),msg_disp_time);
-        this->startRosCore();
-        m_ui->statusbar->showMessage(tr("ROS core has been started"),msg_disp_time);
-    }
-    this->updateRosStatus();
-
+//    if (!m_drone_node.rosIsConnected())
+//    {
+//        m_ui->master_group->setEnabled(false);
+//        m_ui->core_group->setEnabled(false);
+//        m_ui->roscore_button->setStatusTip(tr(""));
+//        int msg_disp_time{5000};
+//        m_ui->statusbar->showMessage(tr("Starting ROS core"),msg_disp_time);
+//        this->startRosCore();
+//        m_ui->statusbar->showMessage(tr("ROS core has been started"),msg_disp_time);
+//    }
+//    this->updateRosStatus();
 }
 
 void MainWindow::on_ros_check_box_clicked()
 {
-    if (m_ui->ros_check_box->isChecked())
-    {
-        m_ui->ros_label->show();
-        m_ui->connection_label->show();
-        m_ui->view_ros_connection_status->setChecked(true);
-    }
-    else
-    {
-        m_ui->ros_label->hide();
-        m_ui->connection_label->hide();
-        m_ui->view_ros_connection_status->setChecked(false);
-    }
-    m_ui->ros_tab_widget->setEnabled(m_ui->ros_check_box->isChecked());
-    m_drone_node.setUseRos(m_ui->ros_check_box->isChecked());
+//    if (m_ui->ros_check_box->isChecked())
+//    {
+//        m_ui->ros_label->show();
+//        m_ui->connection_label->show();
+//        m_ui->view_ros_connection_status->setChecked(true);
+//    }
+//    else
+//    {
+//        m_ui->ros_label->hide();
+//        m_ui->connection_label->hide();
+//        m_ui->view_ros_connection_status->setChecked(false);
+//    }
+//    m_ui->ros_tab_widget->setEnabled(m_ui->ros_check_box->isChecked());
+//    m_drone_node.setUseRos(m_ui->ros_check_box->isChecked());
 }
 
 void MainWindow::on_view_ros_settings_panel_triggered()
@@ -355,25 +370,25 @@ void MainWindow::on_view_ros_connection_status_triggered()
 
 void MainWindow::on_master_connect_button_clicked()
 {
-    this->disableOtherConnectionOptions();
-    m_ui->statusbar->showMessage(tr("Trying to connect to ROS master"));
-    if (m_ui->use_env_check_box->isChecked())
-    {
-        if (!m_drone_node.init())
-            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure roscore is running and try again."));
-        else
-            this->onSuccessfulMasterConnection();
-    }
-    else
-    {
-        if (!m_drone_node.init(m_ui->master_line_edit->text().toStdString(),m_ui->host_line_edit->text().toStdString(),m_use_ros_ip))
-            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure the provided ROS_MASTER_URI and ROS_IP/HOSTNAME are correct. ROS will not "
-                                                                       "let you change these values once you first try to connect. If they are invalid, you "
-                                                                       "will need to restart the application and try again. If the values are correct, make "
-                                                                       "sure the ROS core is running and try to connect again."));
-        else
-            this->onSuccessfulMasterConnection();
-    }
+//    this->disableOtherConnectionOptions();
+//    m_ui->statusbar->showMessage(tr("Trying to connect to ROS master"));
+//    if (m_ui->use_env_check_box->isChecked())
+//    {
+//        if (!m_drone_node.init())
+//            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure roscore is running and try again."));
+//        else
+//            this->onSuccessfulMasterConnection();
+//    }
+//    else
+//    {
+//        if (!m_drone_node.init(m_ui->master_line_edit->text().toStdString(),m_ui->host_line_edit->text().toStdString(),m_use_ros_ip))
+//            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure the provided ROS_MASTER_URI and ROS_IP/HOSTNAME are correct. ROS will not "
+//                                                                       "let you change these values once you first try to connect. If they are invalid, you "
+//                                                                       "will need to restart the application and try again. If the values are correct, make "
+//                                                                       "sure the ROS core is running and try to connect again."));
+//        else
+//            this->onSuccessfulMasterConnection();
+//    }
 }
 
 void MainWindow::disableOtherConnectionOptions()
@@ -479,28 +494,28 @@ void MainWindow::onToolbarVisibilityChanged(bool visible)
 
 void MainWindow::populateTopicsComboBox()
 {
-    m_ui->topics_combo_box->clear();
-    std::string topics{m_drone_node.getOdometryTopics()};
-    QString str{QString::fromUtf8(topics.c_str())};
-    QStringList list{str.split(",")};
-    m_ui->topics_combo_box->addItems(list);
-        m_ui->topics_combo_box->removeItem(m_ui->topics_combo_box->count()-1);
+//    m_ui->topics_combo_box->clear();
+//    std::string topics{m_drone_node.getOdometryTopics()};
+//    QString str{QString::fromUtf8(topics.c_str())};
+//    QStringList list{str.split(",")};
+//    m_ui->topics_combo_box->addItems(list);
+//        m_ui->topics_combo_box->removeItem(m_ui->topics_combo_box->count()-1);
 }
 
 void MainWindow::on_scan_button_clicked()
 {
-    populateTopicsComboBox();
-    int display_time{5000};
-    m_ui->statusbar->showMessage(tr("Finished scanning for Odometry topics and re-populated list"),display_time);
+//    populateTopicsComboBox();
+//    int display_time{5000};
+//    m_ui->statusbar->showMessage(tr("Finished scanning for Odometry topics and re-populated list"),display_time);
 }
 
 void MainWindow::on_subscribe_button_clicked()
 {
-    QString topic{m_ui->topics_combo_box->currentText()};
-    m_drone_node.setupRosComms(topic.toStdString());
-    QString message{"Subscribed to the selected topic: "};
-    int display_time{5000};
-    m_ui->statusbar->showMessage(message+topic,display_time);
+//    QString topic{m_ui->topics_combo_box->currentText()};
+//    m_drone_node.setupRosComms(topic.toStdString());
+//    QString message{"Subscribed to the selected topic: "};
+//    int display_time{5000};
+//    m_ui->statusbar->showMessage(message+topic,display_time);
 }
 
 void MainWindow::on_reset_triggered()
@@ -518,32 +533,97 @@ void MainWindow::on_view_main_toolbar_triggered()
 
 void MainWindow::on_set_waypoint_button_clicked()
 {
-    double north{m_ui->north_spin->value()};
-    double east{m_ui->east_spin->value()};
-    double height{m_ui->height_spin->value()};
-    double yaw_radians{osg::DegreesToRadians(m_ui->yaw_spin->value())};
-    Eigen::Vector4d ref_cmd{north,east,height,yaw_radians};
-    m_controller_node.setRefCmd(ref_cmd);
+//    double north{m_ui->north_spin->value()};
+//    double east{m_ui->east_spin->value()};
+//    double height{m_ui->height_spin->value()};
+//    double yaw_radians{osg::DegreesToRadians(m_ui->yaw_spin->value())};
+//    Eigen::Vector4d ref_cmd{north,east,height,yaw_radians};
+//    m_controller_node.setRefCmd(ref_cmd);
 }
 
 void MainWindow::on_set_weights_button_clicked()
 {
-    dyn::xVec state_weights;
-    state_weights << m_ui->px_spin->value(),m_ui->py_spin->value(),m_ui->pz_spin->value(),
-                     m_ui->rx_spin->value(),m_ui->ry_spin->value(),m_ui->rz_spin->value(),
-                     m_ui->vx_spin->value(),m_ui->vy_spin->value(),m_ui->vz_spin->value(),
-                     m_ui->wx_spin->value(),m_ui->wy_spin->value(),m_ui->wz_spin->value();
-    dyn::uVec input_weights;
-    input_weights = input_weights.setOnes(dyn::INPUT_SIZE,1)*m_ui->u_weights_spin->value();
-    m_controller_node.setWeights(state_weights,input_weights);
+//    dyn::xVec state_weights;
+//    state_weights << m_ui->px_spin->value(),m_ui->py_spin->value(),m_ui->pz_spin->value(),
+//                     m_ui->rx_spin->value(),m_ui->ry_spin->value(),m_ui->rz_spin->value(),
+//                     m_ui->vx_spin->value(),m_ui->vy_spin->value(),m_ui->vz_spin->value(),
+//                     m_ui->wx_spin->value(),m_ui->wy_spin->value(),m_ui->wz_spin->value();
+//    dyn::uVec input_weights;
+//    input_weights = input_weights.setOnes(dyn::INPUT_SIZE,1)*m_ui->u_weights_spin->value();
+//    m_controller_node.setWeights(state_weights,input_weights);
 }
 
 void MainWindow::on_set_rates_button_clicked()
 {
-    m_controller_node.setRates(m_ui->ts_spin->value(),m_ui->slew_spin->value());
+//    m_controller_node.setRates(m_ui->ts_spin->value(),m_ui->slew_spin->value());
 }
 
 void MainWindow::on_pause_triggered()
 {
     startOrPauseSim();
+}
+
+void MainWindow::updatePoseFromSliders()
+{
+    nav_msgs::Odometry odom;
+    odom.pose.pose.position.x = m_north;
+    odom.pose.pose.position.y = -m_east;
+    odom.pose.pose.position.z = m_height;
+
+    osg::Vec3d x_axis{1,0,0};
+    double x_angle{osg::DegreesToRadians(m_roll)};
+    osg::Quat qx(x_angle,x_axis);
+
+    osg::Vec3d y_axis{0,-1,0};
+    double y_angle{osg::DegreesToRadians(m_pitch)};
+    osg::Quat qy(y_angle,y_axis);
+
+    osg::Vec3d z_axis{0,0,-1};
+    double z_angle{osg::DegreesToRadians(m_yaw)};
+    osg::Quat qz(z_angle,z_axis);
+
+    osg::Quat q{qx * qy * qz};
+    //    quat::Quatd q{quat::Quatd::from_euler(m_roll,m_pitch,m_yaw)};
+    odom.pose.pose.orientation.w = q.w();
+    odom.pose.pose.orientation.x = q.x();
+    odom.pose.pose.orientation.y = q.y();
+    odom.pose.pose.orientation.z = q.z();
+
+    emit slidersChanged(&odom);
+}
+
+void MainWindow::on_north_slider_sliderMoved(int position)
+{
+    m_north = position / 10.0;
+    this->updatePoseFromSliders();
+}
+
+void MainWindow::on_east_slider_sliderMoved(int position)
+{
+    m_east = position / 10.0;
+    this->updatePoseFromSliders();
+}
+
+void MainWindow::on_height_slider_sliderMoved(int position)
+{
+    m_height = position / 10.0;
+    this->updatePoseFromSliders();
+}
+
+void MainWindow::on_roll_slider_sliderMoved(int position)
+{
+    m_roll = position;
+    this->updatePoseFromSliders();
+}
+
+void MainWindow::on_pitch_slider_sliderMoved(int position)
+{
+    m_pitch = position;
+    this->updatePoseFromSliders();
+}
+
+void MainWindow::on_yaw_slider_sliderMoved(int position)
+{
+    m_yaw = position;
+    this->updatePoseFromSliders();
 }

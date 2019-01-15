@@ -45,12 +45,10 @@ private:
   osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> m_graphics_window;
   osg::ref_ptr<osgViewer::CompositeViewer> m_viewer;
   osg::ref_ptr<osgViewer::View> m_view;
-  osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> m_manipulator;
-  osg::ref_ptr<osgGA::TrackballManipulator> m_custom_manipulator;
-  osg::ref_ptr<osgGA::NodeTrackerManipulator> m_tracker_manipulator;
+  osg::ref_ptr<osgGA::NodeTrackerManipulator> m_manipulator;
   osg::ref_ptr<osg::Group> m_root;
   osg::ref_ptr<DroneUpdateCallback> m_drone_update_callback;
-  void setupManipulators();
+  void setupManipulators(osg::ref_ptr<osg::PositionAttitudeTransform> track_node);
   void setupCamera(osg::Camera* camera);
   void setupView(osg::Camera* camera);
   void setupViewer();

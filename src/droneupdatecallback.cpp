@@ -2,11 +2,10 @@
 #include <osg/PositionAttitudeTransform>
 #include <osgGA/TrackballManipulator>
 
-DroneUpdateCallback::DroneUpdateCallback(osg::ref_ptr<osgGA::TrackballManipulator> manipulator) :
-    m_manipulator{manipulator},
+DroneUpdateCallback::DroneUpdateCallback() :
     m_q_i2c{0,0,0,1},
     m_max_angle{osg::DegreesToRadians(17.0)},
-    m_pos_offset{0,0,-0.045},
+    m_pos_offset{0,0,0.11},
     m_pos{0,0,0},
     m_att{0,0,0,1},
     m_eye{-5.0,0,-1.0},
@@ -32,7 +31,7 @@ void DroneUpdateCallback::updateManipulator()
     m_center = m_q_i2c*m_center;
     m_center.set(m_center.x()+m_eye.x(),m_center.y(),m_pos.z());
 
-    m_manipulator->setTransformation(m_eye,m_center,m_up);
+//    m_manipulator->setTransformation(m_eye,m_center,m_up);
 }
 
 void DroneUpdateCallback::resetManipulator()
@@ -41,7 +40,7 @@ void DroneUpdateCallback::resetManipulator()
     m_pos.set(0,0,0);
     m_att.set(0,0,0,1.0);
     m_center.set(0,0,0);
-    m_manipulator->setTransformation(m_eye,m_center,m_up);
+//    m_manipulator->setTransformation(m_eye,m_center,m_up);
 }
 
 void DroneUpdateCallback::operator()(osg::Node *node, osg::NodeVisitor *nv)
