@@ -5,7 +5,7 @@
 DroneUpdateCallback::DroneUpdateCallback() :
     m_q_i2c{0,0,0,1},
     m_max_angle{osg::DegreesToRadians(17.0)},
-    m_pos_offset{0,0,0.11},
+    m_pos_offset{0,0,-0.11},
     m_pos{0,0,0},
     m_att{0,0,0,1},
     m_eye{-5.0,0,-1.0},

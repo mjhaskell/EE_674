@@ -4,7 +4,8 @@ project(fixedwing_sim)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
-find_package(catkin REQUIRED COMPONENTS qt_build roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
+#find_package(catkin REQUIRED COMPONENTS roscpp std_msgs roslib)
 find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgDB
     osgGA
@@ -23,7 +24,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     include
     )
 
-catkin_package()
+catkin_package(INCLUDE_DIRS include CATKIN_DEPENDS roscpp std_msgs)
+#catkin_package(INCLUDE_DIRS include CATKIN_DEPENDS roscpp std_msgs roslib)
 
 file(COPY obj DESTINATION devel/lib/fixedwing_sim)
 
