@@ -567,23 +567,22 @@ void MainWindow::updatePoseFromSliders()
 {
     nav_msgs::Odometry odom;
     odom.pose.pose.position.x = m_north;
-    odom.pose.pose.position.y = -m_east;
-    odom.pose.pose.position.z = m_height;
+    odom.pose.pose.position.y = m_east;
+    odom.pose.pose.position.z = -m_height;
 
     osg::Vec3d x_axis{1,0,0};
     double x_angle{osg::DegreesToRadians(m_roll)};
     osg::Quat qx(x_angle,x_axis);
 
-    osg::Vec3d y_axis{0,-1,0};
+    osg::Vec3d y_axis{0,1,0};
     double y_angle{osg::DegreesToRadians(m_pitch)};
     osg::Quat qy(y_angle,y_axis);
 
-    osg::Vec3d z_axis{0,0,-1};
+    osg::Vec3d z_axis{0,0,1};
     double z_angle{osg::DegreesToRadians(m_yaw)};
     osg::Quat qz(z_angle,z_axis);
 
     osg::Quat q{qx * qy * qz};
-    //    quat::Quatd q{quat::Quatd::from_euler(m_roll,m_pitch,m_yaw)};
     odom.pose.pose.orientation.w = q.w();
     odom.pose.pose.orientation.x = q.x();
     odom.pose.pose.orientation.y = q.y();
