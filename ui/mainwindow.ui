@@ -473,7 +473,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_16">
            <property name="text">
-            <string>North:</string>
+            <string>Fx:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -481,12 +481,15 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSlider" name="height_slider">
+          <widget class="QSlider" name="fz_slider">
+           <property name="minimum">
+            <number>-100</number>
+           </property>
            <property name="maximum">
             <number>100</number>
            </property>
            <property name="pageStep">
-            <number>10</number>
+            <number>20</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -495,12 +498,12 @@
             <enum>QSlider::TicksAbove</enum>
            </property>
            <property name="tickInterval">
-            <number>10</number>
+            <number>20</number>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QSlider" name="north_slider">
+          <widget class="QSlider" name="fx_slider">
            <property name="minimum">
             <number>-100</number>
            </property>
@@ -522,7 +525,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QSlider" name="east_slider">
+          <widget class="QSlider" name="fy_slider">
            <property name="minimum">
             <number>-100</number>
            </property>
@@ -546,23 +549,23 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_17">
            <property name="text">
-            <string>East:</string>
+            <string>Fy:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QSlider" name="roll_slider">
+          <widget class="QSlider" name="tx_slider">
            <property name="minimum">
-            <number>-90</number>
+            <number>-100</number>
            </property>
            <property name="maximum">
-            <number>90</number>
+            <number>100</number>
            </property>
            <property name="singleStep">
             <number>1</number>
            </property>
            <property name="pageStep">
-            <number>10</number>
+            <number>20</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -571,51 +574,51 @@
             <enum>QSlider::TicksAbove</enum>
            </property>
            <property name="tickInterval">
-            <number>15</number>
+            <number>20</number>
            </property>
           </widget>
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_18">
            <property name="text">
-            <string>Height:</string>
+            <string>Fz:</string>
            </property>
           </widget>
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_19">
            <property name="text">
-            <string>Roll:</string>
+            <string>Tx:</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_20">
            <property name="text">
-            <string>Pitch:</string>
+            <string>Ty:</string>
            </property>
           </widget>
          </item>
          <item row="5" column="0">
           <widget class="QLabel" name="label_21">
            <property name="text">
-            <string>Yaw:</string>
+            <string>Tz:</string>
            </property>
           </widget>
          </item>
          <item row="4" column="1">
-          <widget class="QSlider" name="pitch_slider">
+          <widget class="QSlider" name="ty_slider">
            <property name="minimum">
-            <number>-90</number>
+            <number>-100</number>
            </property>
            <property name="maximum">
-            <number>90</number>
+            <number>100</number>
            </property>
            <property name="singleStep">
             <number>1</number>
            </property>
            <property name="pageStep">
-            <number>10</number>
+            <number>20</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -624,23 +627,23 @@
             <enum>QSlider::TicksAbove</enum>
            </property>
            <property name="tickInterval">
-            <number>15</number>
+            <number>20</number>
            </property>
           </widget>
          </item>
          <item row="5" column="1">
-          <widget class="QSlider" name="yaw_slider">
+          <widget class="QSlider" name="tz_slider">
            <property name="minimum">
-            <number>-90</number>
+            <number>-100</number>
            </property>
            <property name="maximum">
-            <number>90</number>
+            <number>100</number>
            </property>
            <property name="singleStep">
             <number>1</number>
            </property>
            <property name="pageStep">
-            <number>10</number>
+            <number>20</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -649,7 +652,7 @@
             <enum>QSlider::TicksAbove</enum>
            </property>
            <property name="tickInterval">
-            <number>15</number>
+            <number>20</number>
            </property>
           </widget>
          </item>

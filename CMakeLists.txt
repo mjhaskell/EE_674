@@ -4,7 +4,7 @@ project(fixedwing_sim)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
-find_package(catkin REQUIRED COMPONENTS qt_build roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp)
 find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgDB
     osgGA

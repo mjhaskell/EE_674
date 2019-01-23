@@ -47,6 +47,7 @@ enum
 };
 typedef Eigen::Matrix<double,INPUT_SIZE,1> uVec;
 typedef Eigen::Matrix<double,STATE_SIZE,INPUT_SIZE> MatrixB;
+typedef Eigen::Matrix<double,6,1> vec6;
 
 typedef struct
 {

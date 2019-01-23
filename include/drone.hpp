@@ -13,6 +13,7 @@ public:
     virtual ~Drone();
     void sendAttitudeCmds(const cmdVec& cmds);
     void sendMotorCmds(const uVec& inputs);
+    void sendWrench(const vec6& inputs);
     xVec getStates() const;
     uVec getEquilibriumInputs() const;
     double getDt(const bool milli=true) const;

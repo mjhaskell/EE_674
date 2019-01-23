@@ -17,7 +17,7 @@ DroneNode::DroneNode(int argc, char** argv) :
     m_ros_is_connected{false},
     m_is_running{false}
 {
-    m_inputs = m_drone.getEquilibriumInputs();
+//    m_inputs = m_drone.getEquilibriumInputs();
     m_states = m_drone.getStates();
     this->resetOdometry();
 }
@@ -102,7 +102,7 @@ void DroneNode::resetNode()
 {
     m_drone.resetStates();
     m_states = m_drone.getStates();
-    m_inputs = m_drone.getEquilibriumInputs();
+//    m_inputs = m_drone.getEquilibriumInputs();
     this->resetOdometry();
     emit statesChanged(&m_odom);
 }
@@ -122,7 +122,7 @@ std::string DroneNode::getOdometryTopics()
     return topics.str();
 }
 
-void DroneNode::updateInputs(const dyn::uVec* inputs)
+void DroneNode::updateInputs(const dyn::vec6* inputs)
 {
     m_inputs = *inputs;
 }
@@ -167,7 +167,7 @@ void DroneNode::setupRosComms(const std::string topic)
 
 void DroneNode::updateDynamics()
 {
-    m_drone.sendMotorCmds(m_inputs);
+//    m_drone.sendMotorCmds(m_inputs);
     m_states = m_drone.getStates();
 
     m_odom.pose.pose.position.x = m_states(dyn::PX);

@@ -33,7 +33,7 @@ signals:
     void rosLostConnection();
 
 public slots:
-    void updateInputs(const dyn::uVec* inputs);
+    void updateInputs(const dyn::vec6* inputs);
 
 protected:
     void runRosNode();
@@ -49,7 +49,7 @@ private:
     std::string m_node_name{"drone_node"};
     dyn::Drone m_drone;
     double m_rate;
-    dyn::uVec m_inputs;
+    dyn::vec6 m_inputs;
     dyn::xVec m_states;
     nav_msgs::Odometry m_odom;
     nav_msgs::Odometry m_sub_odom;

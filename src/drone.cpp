@@ -48,6 +48,11 @@ void Drone::sendMotorCmds(const uVec& inputs)
     m_states += m_rk4.dt/6.0 * (m_rk4.k1 + 2*m_rk4.k2 + 2*m_rk4.k3 + m_rk4.k4);
 }
 
+void Drone::sendWrench(const vec6 &inputs)
+{
+
+}
+
 xVec Drone::getStates() const
 {
     return m_states;
