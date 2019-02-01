@@ -24,7 +24,7 @@ public:
     ~MainWindow();
 
 signals:
-    void slidersChanged(dyn::vec6* inputs);
+    void slidersChanged(dyn::Wrench* inputs);
 
 protected:
     void setupSignalsAndSlots();

@@ -1,9 +1,9 @@
 #include "dronenode.hpp"
-#include "drone.hpp"
+#include "dynamics/drone.hpp"
 #include <ros/ros.h>
 #include <string>
 #include "nav_msgs/Odometry.h"
-#include "quat.hpp"
+#include "geometry/quat.h"
 #include <chrono>
 
 namespace quad
@@ -122,7 +122,7 @@ std::string DroneNode::getOdometryTopics()
     return topics.str();
 }
 
-void DroneNode::updateInputs(const dyn::vec6* inputs)
+void DroneNode::updateInputs(const dyn::Wrench* inputs)
 {
     m_inputs = *inputs;
 }

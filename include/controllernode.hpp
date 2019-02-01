@@ -3,7 +3,7 @@
 
 #include <QThread>
 #include "nav_msgs/Odometry.h"
-#include "controller.hpp"
+#include "dynamics/controller.hpp"
 
 namespace quad
 {

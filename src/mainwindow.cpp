@@ -9,7 +9,7 @@
 #include <chrono>
 
 //#include "quat.hpp"
-#include "types.hpp"
+#include "dynamics/types.hpp"
 
 MainWindow::MainWindow(int argc,char** argv,QWidget *parent) :
     QMainWindow(parent),
@@ -568,8 +568,8 @@ void MainWindow::on_pause_triggered()
 
 void MainWindow::updatePoseFromSliders()
 {
-    dyn::vec6 inputs;
-    inputs << m_fx,m_fy,m_fz,m_tx,m_ty,m_tz;
+    dyn::Wrench inputs;
+    inputs.vec << m_fx,m_fy,m_fz,m_tx,m_ty,m_tz;
 
     emit slidersChanged(&inputs);
 }
