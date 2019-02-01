@@ -6,7 +6,7 @@ add_subdirectory(lib/dynamics)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
 find_package(Eigen3 REQUIRED)
 find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgDB
@@ -28,7 +28,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     lib/dynamics/include/geometry/include/
     )
 
-catkin_package()
+catkin_package(INCLUDE_DIRS include CATKIN_DEPENDS roscpp std_msgs roslib)
 
 file(COPY obj DESTINATION devel/lib/fixedwing_sim)
 
