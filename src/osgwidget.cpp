@@ -415,7 +415,7 @@ osg::Geometry* getOriginAxis(int x,int y,int z)
     osg::Geometry* geom{new osg::Geometry};
     geom->setUseDisplayList(false);
     geom->setVertexArray(v);
-    osg::Vec4 color{float(z),float(y),float(x),1.f};
+    osg::Vec4 color{float(x),float(y),float(z),1.f};
     osg::Vec4Array* c{new osg::Vec4Array};
     c->push_back(color);
     geom->setColorArray(c, osg::Array::BIND_OVERALL);
@@ -607,7 +607,6 @@ osg::ref_ptr<osg::Node> createModel(std::string name)
 
 osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createDrone(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/jet_fighter.obj")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/jet_fighter.obj")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0.075*bounding_radius*0,0.075*bounding_radius};
@@ -626,7 +625,6 @@ osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createDrone(double bound
 
 osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createCastle(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/castle.obj")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/castle.obj")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,-0.1*bounding_radius};
@@ -643,7 +641,6 @@ osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createCastle(double boun
 
 osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createTreehouse(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/treehouse.3ds")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/treehouse.3ds")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,0};
@@ -662,7 +659,6 @@ osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createTreehouse(double b
 
 osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createTower(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/tower.3ds")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/tower.3ds")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,0};
@@ -681,7 +677,6 @@ osg::ref_ptr<osg::PositionAttitudeTransform> OSGWidget::createTower(double bound
 
 osg::ref_ptr<osg::Node> OSGWidget::createCloud(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/cloud.obj")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/cloud.obj")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,0};
@@ -692,7 +687,6 @@ osg::ref_ptr<osg::Node> OSGWidget::createCloud(double bounding_radius)
 
 osg::ref_ptr<osg::Node> OSGWidget::createPinetree(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/firtree1.3ds")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/firtree1.3ds")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,0};
@@ -707,7 +701,6 @@ osg::ref_ptr<osg::Node> OSGWidget::createPinetree(double bounding_radius)
 
 osg::ref_ptr<osg::Node> OSGWidget::createTree(double bounding_radius)
 {
-//    osg::ref_ptr<osg::Node> model{createModel("obj/Tree2.3ds")};
     osg::ref_ptr<osg::Node> model{createModel(m_path+"/obj/Tree2.3ds")};
     osg::ref_ptr<osg::Node> scaled_model{scaleModel(model,bounding_radius)};
     osg::Vec3d cog_offset{0,0,0};

@@ -9,6 +9,7 @@
 #include <chrono>
 
 //#include "quat.hpp"
+#include "dynamics/types.hpp"
 
 MainWindow::MainWindow(int argc,char** argv,QWidget *parent) :
     QMainWindow(parent),
@@ -16,7 +17,7 @@ MainWindow::MainWindow(int argc,char** argv,QWidget *parent) :
     m_osg_widget{new OSGWidget},
     m_argc{argc},
     m_argv{argv},
-//    m_drone_node{m_argc,m_argv},
+    m_drone_node{m_argc,m_argv},
     m_process{new QProcess{this}}
 {
     m_ui->setupUi(this);
@@ -55,14 +56,14 @@ void MainWindow::setupSignalsAndSlots()
     connect(m_main_toolbar, &QToolBar::visibilityChanged, this, &MainWindow::onToolbarVisibilityChanged);
 //    connect(&m_drone_node, &quad::DroneNode::feedbackStates, &m_controller_node, &quad::ControllerNode::updateStates);
 //    connect(&m_controller_node, &quad::ControllerNode::sendInputs, &m_drone_node, &quad::DroneNode::updateInputs);
-//    connect(&m_drone_node, &quad::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
-//    connect(&m_drone_node, &quad::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
-    connect(this, &MainWindow::slidersChanged, m_osg_widget, &OSGWidget::updateDroneStates);
+    connect(&m_drone_node, &quad::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
+    connect(&m_drone_node, &quad::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
+    connect(this, &MainWindow::slidersChanged, &m_drone_node, &quad::DroneNode::updateInputs);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-//    m_drone_node.stopRunning();
+    m_drone_node.stopRunning();
 //    m_controller_node.stopRunning();
     this->writeSettings();
     QMainWindow::closeEvent(event);
@@ -112,10 +113,10 @@ void MainWindow::writeSettings()
 
 void MainWindow::updateRosStatus()
 {
-//    if(m_drone_node.rosIsConnected() && ros::master::check())
-//        m_ui->connection_label->setPixmap(m_check_icon.pixmap(16,16));
-//    else
-//        m_ui->connection_label->setPixmap(m_x_icon.pixmap(16,16));
+    if(m_drone_node.rosIsConnected() && ros::master::check())
+        m_ui->connection_label->setPixmap(m_check_icon.pixmap(16,16));
+    else
+        m_ui->connection_label->setPixmap(m_x_icon.pixmap(16,16));
 }
 
 void MainWindow::startRosCore()
@@ -125,7 +126,7 @@ void MainWindow::startRosCore()
     std::string master_uri{"http://localhost:11311/"};
     std::string host_uri{"localhost"};
     bool use_ros_ip{false};
-//    while (!m_drone_node.init(master_uri,host_uri,use_ros_ip)) {}
+    while (!m_drone_node.init(master_uri,host_uri,use_ros_ip)) {}
     m_app_started_roscore = true;
 }
 
@@ -207,51 +208,53 @@ void MainWindow::startOrPauseSim()
 
 bool MainWindow::startSimulation()
 {   
-//    if (!m_drone_node.startNode())
-//    {
-//        if (m_drone_node.rosIsConnected())
-//            this->closeWithWarning();
-//        else
-//            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),
-//                                 tr("Can not start the simulation. Connect to a ros master and try again."));
-//        return false;
-//    }
+    if (!m_drone_node.startNode())
+    {
+        if (m_drone_node.rosIsConnected())
+            this->closeWithWarning();
+        else
+            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),
+                                 tr("Can not start the simulation. Connect to a ros master and try again."));
+        return false;
+    }
 //    else
 //        m_controller_node.startNode();
-//    return true;
+    return true;
 }
 
 void MainWindow::pauseSimulation()
 {
-//    m_drone_node.stopRunning();
+    m_drone_node.stopRunning();
 //    m_controller_node.stopRunning();
 }
 
 void MainWindow::resetSimulation()
 {
-//    m_is_running = true;
-//    m_ui->ros_check_box->setEnabled(true);
-//    m_ui->topics_combo_box->setEnabled(true);
-//    m_ui->subscribe_button->setEnabled(true);
-//    m_ui->scan_button->setEnabled(true);
-//    startOrPauseSim();
-//    m_drone_node.stopRunning();
+    m_is_running = true;
+    m_ui->ros_check_box->setEnabled(true);
+    m_ui->topics_combo_box->setEnabled(true);
+    m_ui->subscribe_button->setEnabled(true);
+    m_ui->scan_button->setEnabled(true);
+    startOrPauseSim();
+    m_drone_node.stopRunning();
 //    m_controller_node.stopRunning();
-//    m_drone_node.resetNode();
+    m_drone_node.resetNode();
 //    m_controller_node.resetNode();
-//    m_osg_widget->resetManipulatorView();
-    m_ui->north_slider->setSliderPosition(0);
-    m_ui->east_slider->setSliderPosition(0);
-    m_ui->height_slider->setSliderPosition(0);
-    m_ui->roll_slider->setSliderPosition(0);
-    m_ui->pitch_slider->setSliderPosition(0);
-    m_ui->yaw_slider->setSliderPosition(0);
-    m_north = 0;
-    m_east = 0;
-    m_height = 0;
-    m_roll = 0;
-    m_pitch = 0;
-    m_yaw = 0;
+    m_osg_widget->resetManipulatorView();
+
+
+    m_ui->fx_slider->setSliderPosition(0);
+    m_ui->fy_slider->setSliderPosition(0);
+    m_ui->fz_slider->setSliderPosition(0);
+    m_ui->tx_slider->setSliderPosition(0);
+    m_ui->ty_slider->setSliderPosition(0);
+    m_ui->tz_slider->setSliderPosition(0);
+    m_fx = 0;
+    m_fy = 0;
+    m_fz = 0;
+    m_tx = 0;
+    m_ty = 0;
+    m_tz = 0;
     this->updatePoseFromSliders();
 }
 
@@ -284,7 +287,7 @@ void MainWindow::on_start_triggered()
 
 void MainWindow::on_close_triggered()
 {
-//    m_drone_node.stopRunning();
+    m_drone_node.stopRunning();
 //    m_controller_node.stopRunning();
     this->writeSettings();
     close();
@@ -565,64 +568,53 @@ void MainWindow::on_pause_triggered()
 
 void MainWindow::updatePoseFromSliders()
 {
-    nav_msgs::Odometry odom;
-    odom.pose.pose.position.x = m_north;
-    odom.pose.pose.position.y = m_east;
-    odom.pose.pose.position.z = -m_height;
+    dyn::Wrench inputs;
+    inputs.vec << m_fx,m_fy,m_fz,m_tx,m_ty,m_tz;
 
-    osg::Vec3d x_axis{1,0,0};
-    double x_angle{osg::DegreesToRadians(m_roll)};
-    osg::Quat qx(x_angle,x_axis);
-
-    osg::Vec3d y_axis{0,1,0};
-    double y_angle{osg::DegreesToRadians(m_pitch)};
-    osg::Quat qy(y_angle,y_axis);
-
-    osg::Vec3d z_axis{0,0,1};
-    double z_angle{osg::DegreesToRadians(m_yaw)};
-    osg::Quat qz(z_angle,z_axis);
-
-    osg::Quat q{qx * qy * qz};
-    odom.pose.pose.orientation.w = q.w();
-    odom.pose.pose.orientation.x = q.x();
-    odom.pose.pose.orientation.y = q.y();
-    odom.pose.pose.orientation.z = q.z();
-
-    emit slidersChanged(&odom);
+    emit slidersChanged(&inputs);
 }
 
-void MainWindow::on_north_slider_sliderMoved(int position)
+void MainWindow::on_fx_slider_sliderMoved(int position)
 {
-    m_north = position / 10.0;
+    m_fx = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_east_slider_sliderMoved(int position)
+void MainWindow::on_fy_slider_sliderMoved(int position)
 {
-    m_east = position / 10.0;
+    m_fy = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_height_slider_sliderMoved(int position)
+void MainWindow::on_fz_slider_sliderMoved(int position)
 {
-    m_height = position / 10.0;
+    m_fz = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_roll_slider_sliderMoved(int position)
+void MainWindow::on_tx_slider_sliderMoved(int position)
 {
-    m_roll = position;
+    m_tx = double(position) / 100.0;
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_pitch_slider_sliderMoved(int position)
+void MainWindow::on_ty_slider_sliderMoved(int position)
 {
-    m_pitch = position;
+    m_ty = double(position) / 100.0;
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_yaw_slider_sliderMoved(int position)
+void MainWindow::on_tz_slider_sliderMoved(int position)
 {
-    m_yaw = position;
+    m_tz = double(position) / 100.0;
     this->updatePoseFromSliders();
+}
+
+void MainWindow::on_jxz_checkbox_stateChanged(int arg1)
+{
+    if (arg1 == 0)
+        m_drone_node.setInertia(false);
+    else
+        m_drone_node.setInertia(true);
+//    m_ui->jxz_checkbox->
 }
