@@ -70,6 +70,7 @@ private:
   osg::ref_ptr<osg::Node> createTree(double bounding_radius);
   int m_timer_id{0};
   void setupTimer();
+  std::string m_path;
 };
 
 #endif // OSGWIDGET_HPP

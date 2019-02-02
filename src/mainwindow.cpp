@@ -576,36 +576,45 @@ void MainWindow::updatePoseFromSliders()
 
 void MainWindow::on_fx_slider_sliderMoved(int position)
 {
-    m_fx = position;
+    m_fx = double(position);
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_fy_slider_sliderMoved(int position)
 {
-    m_fy = position;
+    m_fy = double(position);
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_fz_slider_sliderMoved(int position)
 {
-    m_fz = position;
+    m_fz = double(position);
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_tx_slider_sliderMoved(int position)
 {
-    m_tx = position;
+    m_tx = double(position) / 100.0;
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_ty_slider_sliderMoved(int position)
 {
-    m_ty = position;
+    m_ty = double(position) / 100.0;
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_tz_slider_sliderMoved(int position)
 {
-    m_tz = position;
+    m_tz = double(position) / 100.0;
     this->updatePoseFromSliders();
+}
+
+void MainWindow::on_jxz_checkbox_stateChanged(int arg1)
+{
+    if (arg1 == 0)
+        m_drone_node.setInertia(false);
+    else
+        m_drone_node.setInertia(true);
+//    m_ui->jxz_checkbox->
 }

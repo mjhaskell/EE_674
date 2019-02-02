@@ -1,5 +1,5 @@
 #include "dronenode.hpp"
-#include "dynamics/drone.hpp"
+//#include "dynamics/drone.hpp"
 #include <ros/ros.h>
 #include <string>
 #include "nav_msgs/Odometry.h"
@@ -14,11 +14,11 @@ DroneNode::DroneNode(int argc, char** argv) :
     m_argv{argv},
     m_use_ros{false},
     m_rate{m_drone.getDt()},
+    m_states{m_drone.getStates()},
     m_ros_is_connected{false},
     m_is_running{false}
 {
 //    m_inputs = m_drone.getEquilibriumInputs();
-    m_states = m_drone.getStates();
     this->resetOdometry();
 }
 
@@ -165,28 +165,35 @@ void DroneNode::setupRosComms(const std::string topic)
     m_state_pub = nh.advertise<nav_msgs::Odometry>("sim_states", states_queue_size);
 }
 
+void DroneNode::setInertia(bool zero_cross_terms)
+{
+    if (zero_cross_terms)
+        m_drone.setInertia(true);
+    else
+        m_drone.setInertia(false);
+}
+
 void DroneNode::updateDynamics()
 {
-//    m_drone.sendMotorCmds(m_inputs);
+    m_drone.sendWrench(m_inputs);
     m_states = m_drone.getStates();
 
-    m_odom.pose.pose.position.x = m_states(dyn::PX);
-    m_odom.pose.pose.position.y = m_states(dyn::PY);
-    m_odom.pose.pose.position.z = -m_states(dyn::PZ);
+    m_odom.pose.pose.position.x = m_states.p(0);
+    m_odom.pose.pose.position.y = m_states.p(1);
+    m_odom.pose.pose.position.z = m_states.p(2);
 
-    m_odom.twist.twist.linear.x = m_states(dyn::VX);
-    m_odom.twist.twist.linear.y = m_states(dyn::VY);
-    m_odom.twist.twist.linear.z = m_states(dyn::VZ);
+    m_odom.twist.twist.linear.x = m_states.v(0);
+    m_odom.twist.twist.linear.y = m_states.v(1);
+    m_odom.twist.twist.linear.z = m_states.v(2);
 
-    quat::Quatd q{quat::Quatd::from_euler(m_states(dyn::RX),m_states(dyn::RY),m_states(dyn::RZ))};
-    m_odom.pose.pose.orientation.w = q.w();
-    m_odom.pose.pose.orientation.x = q.x();
-    m_odom.pose.pose.orientation.y = q.y();
-    m_odom.pose.pose.orientation.z = q.z();
+    m_odom.pose.pose.orientation.w = m_states.q.w();
+    m_odom.pose.pose.orientation.x = m_states.q.x();
+    m_odom.pose.pose.orientation.y = m_states.q.y();
+    m_odom.pose.pose.orientation.z = m_states.q.z();
 
-    m_odom.twist.twist.angular.x = m_states(dyn::WX);
-    m_odom.twist.twist.angular.y = m_states(dyn::WY);
-    m_odom.twist.twist.angular.z = m_states(dyn::WZ);
+    m_odom.twist.twist.angular.x = m_states.w(0);
+    m_odom.twist.twist.angular.y = m_states.w(1);
+    m_odom.twist.twist.angular.z = m_states.w(2);
 
     if (m_use_ros)
         m_odom.header.stamp = ros::Time::now();

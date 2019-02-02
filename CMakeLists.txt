@@ -6,7 +6,7 @@ add_subdirectory(lib/dynamics)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs roslib)
 find_package(Eigen3 REQUIRED)
 find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgDB

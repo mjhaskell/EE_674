@@ -81,6 +81,8 @@ private slots:
     void on_ty_slider_sliderMoved(int position);
     void on_tz_slider_sliderMoved(int position);
 
+    void on_jxz_checkbox_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *m_ui{nullptr};
     OSGWidget *m_osg_widget{nullptr};
