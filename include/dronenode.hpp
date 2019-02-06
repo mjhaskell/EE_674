@@ -26,7 +26,6 @@ public:
     void resetNode();
     std::string getOdometryTopics();
     void setupRosComms(const std::string topic="/sim_states");
-    void setInertia(bool zero_cross_terms=true);
 
 signals:
     void feedbackStates(const dyn::State* states);
@@ -34,7 +33,8 @@ signals:
     void rosLostConnection();
 
 public slots:
-    void updateInputs(const dyn::Wrench* inputs);
+    void updateInputs(const fixedwing::Input* inputs);
+    void updateWind(const Eigen::Vector3d* wind);
 
 protected:
     void runRosNode();
@@ -51,7 +51,7 @@ private:
     fixedwing::Params m_p;
     FixedWing m_drone;
     double m_rate;
-    dyn::Wrench m_inputs;
+    fixedwing::Input m_inputs;
     dyn::State m_states;
     nav_msgs::Odometry m_odom;
     nav_msgs::Odometry m_sub_odom;

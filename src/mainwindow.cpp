@@ -58,7 +58,8 @@ void MainWindow::setupSignalsAndSlots()
 //    connect(&m_controller_node, &quad::ControllerNode::sendInputs, &m_drone_node, &quad::DroneNode::updateInputs);
     connect(&m_drone_node, &quad::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
     connect(&m_drone_node, &quad::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
-    connect(this, &MainWindow::slidersChanged, &m_drone_node, &quad::DroneNode::updateInputs);
+    connect(this, &MainWindow::deltasChanged, &m_drone_node, &quad::DroneNode::updateInputs);
+    connect(this, &MainWindow::windChanged, &m_drone_node, &quad::DroneNode::updateWind);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -243,18 +244,18 @@ void MainWindow::resetSimulation()
     m_osg_widget->resetManipulatorView();
 
 
-    m_ui->fx_slider->setSliderPosition(0);
-    m_ui->fy_slider->setSliderPosition(0);
-    m_ui->fz_slider->setSliderPosition(0);
-    m_ui->tx_slider->setSliderPosition(0);
-    m_ui->ty_slider->setSliderPosition(0);
-    m_ui->tz_slider->setSliderPosition(0);
-    m_fx = 0;
-    m_fy = 0;
-    m_fz = 0;
-    m_tx = 0;
-    m_ty = 0;
-    m_tz = 0;
+    m_ui->de_slider->setSliderPosition(0);
+    m_ui->dt_slider->setSliderPosition(0);
+    m_ui->da_slider->setSliderPosition(0);
+    m_ui->dr_slider->setSliderPosition(0);
+    m_ui->wn_slider->setSliderPosition(0);
+    m_ui->we_slider->setSliderPosition(0);
+    m_de = 0;
+    m_dt = 0;
+    m_da = 0;
+    m_dr = 0;
+    m_wn = 0;
+    m_we = 0;
     this->updatePoseFromSliders();
 }
 
@@ -568,53 +569,55 @@ void MainWindow::on_pause_triggered()
 
 void MainWindow::updatePoseFromSliders()
 {
-    dyn::Wrench inputs;
-    inputs.vec << m_fx,m_fy,m_fz,m_tx,m_ty,m_tz;
+    fixedwing::Input deltas;
+    deltas.de = m_de;
+    deltas.dt = m_dt;
+    deltas.da = m_da;
+    deltas.dr = m_dr;
 
-    emit slidersChanged(&inputs);
+    emit deltasChanged(&deltas);
 }
 
-void MainWindow::on_fx_slider_sliderMoved(int position)
+void MainWindow::updateWindFromSliders()
 {
-    m_fx = double(position);
+    Eigen::Vector3d wind;
+    wind << m_wn, m_we, 0.0;
+
+    emit windChanged(&wind);
+}
+
+void MainWindow::on_de_slider_sliderMoved(int position)
+{
+    m_de = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_fy_slider_sliderMoved(int position)
+void MainWindow::on_dt_slider_sliderMoved(int position)
 {
-    m_fy = double(position);
+    m_dt = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_fz_slider_sliderMoved(int position)
+void MainWindow::on_da_slider_sliderMoved(int position)
 {
-    m_fz = double(position);
+    m_da = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_tx_slider_sliderMoved(int position)
+void MainWindow::on_dr_slider_sliderMoved(int position)
 {
-    m_tx = double(position) / 100.0;
+    m_dr = double(position);
     this->updatePoseFromSliders();
 }
 
-void MainWindow::on_ty_slider_sliderMoved(int position)
+void MainWindow::on_wn_slider_sliderMoved(int position)
 {
-    m_ty = double(position) / 100.0;
-    this->updatePoseFromSliders();
+    m_wn = double(position);
+    this->updateWindFromSliders();
 }
 
-void MainWindow::on_tz_slider_sliderMoved(int position)
+void MainWindow::on_we_slider_sliderMoved(int position)
 {
-    m_tz = double(position) / 100.0;
-    this->updatePoseFromSliders();
-}
-
-void MainWindow::on_jxz_checkbox_stateChanged(int arg1)
-{
-    if (arg1 == 0)
-        m_drone_node.setInertia(false);
-    else
-        m_drone_node.setInertia(true);
-//    m_ui->jxz_checkbox->
+    m_we = double(position);
+    this->updateWindFromSliders();
 }

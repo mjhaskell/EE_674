@@ -122,9 +122,14 @@ std::string DroneNode::getOdometryTopics()
     return topics.str();
 }
 
-void DroneNode::updateInputs(const dyn::Wrench* inputs)
+void DroneNode::updateInputs(const fixedwing::Input* inputs)
 {
     m_inputs = *inputs;
+}
+
+void DroneNode::updateWind(const Eigen::Vector3d* wind)
+{
+    m_drone.setWindSS(*wind);
 }
 
 void DroneNode::runRosNode()
@@ -165,17 +170,9 @@ void DroneNode::setupRosComms(const std::string topic)
     m_state_pub = nh.advertise<nav_msgs::Odometry>("sim_states", states_queue_size);
 }
 
-void DroneNode::setInertia(bool zero_cross_terms)
-{
-    if (zero_cross_terms)
-        m_drone.setInertia(true);
-    else
-        m_drone.setInertia(false);
-}
-
 void DroneNode::updateDynamics()
 {
-    m_drone.sendWrench(m_inputs);
+    m_drone.sendDeltas(m_inputs);
     m_states = m_drone.getStates();
 
     m_odom.pose.pose.position.x = m_states.p(0);

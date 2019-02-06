@@ -24,7 +24,8 @@ public:
     ~MainWindow();
 
 signals:
-    void slidersChanged(dyn::Wrench* inputs);
+    void deltasChanged(fixedwing::Input* inputs);
+    void windChanged(Eigen::Vector3d* wind);
 
 protected:
     void setupSignalsAndSlots();
@@ -47,7 +48,9 @@ protected:
     QAction* createControllerPanelAction();
     void populateTopicsComboBox();
     void onToolbarVisibilityChanged(bool visible);
+
     void updatePoseFromSliders();
+    void updateWindFromSliders();
 
 public slots:
     void closeWithWarning();
@@ -74,14 +77,12 @@ private slots:
     void on_set_rates_button_clicked();
     void on_pause_triggered();
 
-    void on_fx_slider_sliderMoved(int position);
-    void on_fy_slider_sliderMoved(int position);
-    void on_fz_slider_sliderMoved(int position);
-    void on_tx_slider_sliderMoved(int position);
-    void on_ty_slider_sliderMoved(int position);
-    void on_tz_slider_sliderMoved(int position);
-
-    void on_jxz_checkbox_stateChanged(int arg1);
+    void on_de_slider_sliderMoved(int position);
+    void on_dt_slider_sliderMoved(int position);
+    void on_da_slider_sliderMoved(int position);
+    void on_dr_slider_sliderMoved(int position);
+    void on_wn_slider_sliderMoved(int position);
+    void on_we_slider_sliderMoved(int position);
 
 private:
     Ui::MainWindow *m_ui{nullptr};
@@ -97,12 +98,12 @@ private:
     QIcon m_x_icon{QIcon{":myicons/red_x.jpg"}};
     bool m_use_ros_ip{true};
     bool m_is_running{false};
-    double m_fx{0};
-    double m_fy{0};
-    double m_fz{0};
-    double m_tx{0};
-    double m_ty{0};
-    double m_tz{0};
+    double m_de{0};
+    double m_dt{0};
+    double m_da{0};
+    double m_dr{0};
+    double m_wn{0};
+    double m_we{0};
 };
 
 #endif // MAINWINDOW_HPP
