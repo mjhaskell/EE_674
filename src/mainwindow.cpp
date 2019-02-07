@@ -588,25 +588,25 @@ void MainWindow::updateWindFromSliders()
 
 void MainWindow::on_de_slider_sliderMoved(int position)
 {
-    m_de = double(position);
+    m_de = double(position) / 100.0;
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_dt_slider_sliderMoved(int position)
 {
-    m_dt = double(position);
+    m_dt = double(position) / 20.0;
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_da_slider_sliderMoved(int position)
 {
-    m_da = double(position);
+    m_da = double(position) / 100.0;
     this->updatePoseFromSliders();
 }
 
 void MainWindow::on_dr_slider_sliderMoved(int position)
 {
-    m_dr = double(position);
+    m_dr = double(position) / 500.0;
     this->updatePoseFromSliders();
 }
 
