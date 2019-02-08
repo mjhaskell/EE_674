@@ -48,7 +48,7 @@ void DroneUpdateCallback::operator()(osg::Node *node, osg::NodeVisitor *nv)
     osg::PositionAttitudeTransform *pat{dynamic_cast<osg::PositionAttitudeTransform*>(node)};
     pat->setPosition(m_pos+m_pos_offset);
     pat->setAttitude(m_att);
-    this->updateManipulator();
+//    this->updateManipulator();
 
     traverse(node, nv);
 }
