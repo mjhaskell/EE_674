@@ -220,6 +220,105 @@ bool MainWindow::startSimulation()
     }
 //    else
 //        m_controller_node.startNode();
+    if (m_ui->e_radio->isChecked())
+    {
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 0;
+            m_de = -3.75;
+            m_dr = 0;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+
+        auto t_start{std::chrono::high_resolution_clock::now()};
+        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 28.0) {}
+        // wait for a little bit
+
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 0;
+            m_de = 3.75;
+            m_dr = 0;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+    }
+    else if (m_ui->r_radio->isChecked())
+    {
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 0;
+            m_de = 0;
+            m_dr = 2.75;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+
+        auto t_start{std::chrono::high_resolution_clock::now()};
+        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 30.0) {}
+        // wait for a little bit
+
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 0;
+            m_de = 0;
+            m_dr = -2.75*2;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+
+        t_start = std::chrono::high_resolution_clock::now();
+        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 30.0) {}
+        // wait for a little bit
+
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 0;
+            m_de = 0;
+            m_dr = 2.75;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+    }
+    else if (m_ui->a_radio->isChecked())
+    {
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 2.75;
+            m_de = 0;
+            m_dr = 0;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+
+        auto t_start{std::chrono::high_resolution_clock::now()};
+        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 28.0) {}
+        // wait for a little bit
+
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = -2.75*2;
+            m_de = 0;
+            m_dr = 0;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+
+        t_start = std::chrono::high_resolution_clock::now();
+        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 28.0) {}
+        // wait for a little bit
+
+//        for (int i{0}; i < 5000; i++)
+//        {
+            m_da = 2.75;
+            m_de = 0;
+            m_dr = 0;
+            m_dt = 0;
+//        }
+        this->updatePoseFromSliders();
+    }
+
     return true;
 }
 
@@ -243,20 +342,15 @@ void MainWindow::resetSimulation()
 //    m_controller_node.resetNode();
     m_osg_widget->resetManipulatorView();
 
-
-    m_ui->de_slider->setSliderPosition(0);
-    m_ui->dt_slider->setSliderPosition(0);
-    m_ui->da_slider->setSliderPosition(0);
-    m_ui->dr_slider->setSliderPosition(0);
-    m_ui->wn_slider->setSliderPosition(0);
-    m_ui->we_slider->setSliderPosition(0);
-    m_de = 0;
-    m_dt = 0;
-    m_da = 0;
-    m_dr = 0;
-    m_wn = 0;
-    m_we = 0;
-    this->updatePoseFromSliders();
+//    m_ui->wn_slider->setSliderPosition(0);
+//    m_ui->we_slider->setSliderPosition(0);
+//    m_de = 0;
+//    m_dt = 0;
+//    m_da = 0;
+//    m_dr = 0;
+//    m_wn = 0;
+//    m_we = 0;
+//    this->updatePoseFromSliders();
 }
 
 QAction* MainWindow::createRosPanelAction()
@@ -578,46 +672,22 @@ void MainWindow::updatePoseFromSliders()
     emit deltasChanged(&deltas);
 }
 
-void MainWindow::updateWindFromSliders()
-{
-    Eigen::Vector3d wind;
-    wind << m_wn, m_we, 0.0;
+//void MainWindow::updateWindFromSliders()
+//{
+//    Eigen::Vector3d wind;
+//    wind << m_wn, m_we, 0.0;
 
-    emit windChanged(&wind);
-}
+//    emit windChanged(&wind);
+//}
 
-void MainWindow::on_de_slider_sliderMoved(int position)
-{
-    m_de = double(position) / 100.0;
-    this->updatePoseFromSliders();
-}
+//void MainWindow::on_wn_slider_sliderMoved(int position)
+//{
+//    m_wn = double(position);
+//    this->updateWindFromSliders();
+//}
 
-void MainWindow::on_dt_slider_sliderMoved(int position)
-{
-    m_dt = double(position) / 20.0;
-    this->updatePoseFromSliders();
-}
-
-void MainWindow::on_da_slider_sliderMoved(int position)
-{
-    m_da = double(position) / 100.0;
-    this->updatePoseFromSliders();
-}
-
-void MainWindow::on_dr_slider_sliderMoved(int position)
-{
-    m_dr = double(position) / 500.0;
-    this->updatePoseFromSliders();
-}
-
-void MainWindow::on_wn_slider_sliderMoved(int position)
-{
-    m_wn = double(position);
-    this->updateWindFromSliders();
-}
-
-void MainWindow::on_we_slider_sliderMoved(int position)
-{
-    m_we = double(position);
-    this->updateWindFromSliders();
-}
+//void MainWindow::on_we_slider_sliderMoved(int position)
+//{
+//    m_we = double(position);
+//    this->updateWindFromSliders();
+//}

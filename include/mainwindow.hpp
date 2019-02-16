@@ -50,7 +50,7 @@ protected:
     void onToolbarVisibilityChanged(bool visible);
 
     void updatePoseFromSliders();
-    void updateWindFromSliders();
+//    void updateWindFromSliders();
 
 public slots:
     void closeWithWarning();
@@ -77,12 +77,8 @@ private slots:
     void on_set_rates_button_clicked();
     void on_pause_triggered();
 
-    void on_de_slider_sliderMoved(int position);
-    void on_dt_slider_sliderMoved(int position);
-    void on_da_slider_sliderMoved(int position);
-    void on_dr_slider_sliderMoved(int position);
-    void on_wn_slider_sliderMoved(int position);
-    void on_we_slider_sliderMoved(int position);
+//    void on_wn_slider_sliderMoved(int position);
+//    void on_we_slider_sliderMoved(int position);
 
 private:
     Ui::MainWindow *m_ui{nullptr};

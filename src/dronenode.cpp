@@ -18,8 +18,7 @@ DroneNode::DroneNode(int argc, char** argv) :
     m_ros_is_connected{false},
     m_is_running{false}
 {
-//    m_inputs = m_drone.getEquilibriumInputs();
-    this->resetOdometry();
+    m_inputs = m_drone.getEquilibriumInputs();
 }
 
 DroneNode::~DroneNode()
@@ -102,7 +101,7 @@ void DroneNode::resetNode()
 {
     m_drone.resetStates();
     m_states = m_drone.getStates();
-//    m_inputs = m_drone.getEquilibriumInputs();
+    m_inputs = m_drone.getEquilibriumInputs();
     this->resetOdometry();
     emit statesChanged(&m_odom);
 }
@@ -124,7 +123,11 @@ std::string DroneNode::getOdometryTopics()
 
 void DroneNode::updateInputs(const fixedwing::Input* inputs)
 {
-    m_inputs = *inputs;
+//    auto t_start{std::chrono::high_resolution_clock::now()};
+    m_inputs += *inputs;
+//    while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < m_rate*3) {}
+
+//    m_inputs = m_drone.getEquilibriumInputs();
 }
 
 void DroneNode::updateWind(const Eigen::Vector3d* wind)
@@ -165,7 +168,7 @@ void DroneNode::setupRosComms(const std::string topic)
 {
     ros::start();
     ros::NodeHandle nh;
-    int states_queue_size{50};
+    uint32_t states_queue_size{50};
     m_state_sub = nh.subscribe(topic, states_queue_size, &DroneNode::stateCallback, this);
     m_state_pub = nh.advertise<nav_msgs::Odometry>("sim_states", states_queue_size);
 }

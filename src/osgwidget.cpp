@@ -241,7 +241,7 @@ void OSGWidget::setupManipulators(osg::ref_ptr<osg::PositionAttitudeTransform> t
 {
     m_manipulator->setAllowThrow(false);
 
-    osgGA::NodeTrackerManipulator::TrackerMode track_mode{osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM};
+    osgGA::NodeTrackerManipulator::TrackerMode track_mode{osgGA::NodeTrackerManipulator::NODE_CENTER};
     m_manipulator->setTrackerMode(track_mode);
     osgGA::NodeTrackerManipulator::RotationMode rot_mode{osgGA::NodeTrackerManipulator::TRACKBALL};
     m_manipulator->setRotationMode(rot_mode);
