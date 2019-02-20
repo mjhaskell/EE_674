@@ -10,8 +10,8 @@
 #include <osgGA/TrackballManipulator>
 #include <osgGA/NodeTrackerManipulator>
 #include <osgText/Text>
-#include <dronenode.hpp>
-#include "droneupdatecallback.hpp"
+#include <mav/dronenode.hpp>
+#include "mav/droneupdatecallback.hpp"
 
 class OSGWidget : public QOpenGLWidget
 {

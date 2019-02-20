@@ -2,8 +2,8 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include "dronenode.hpp"
-#include "controllernode.hpp"
+#include "mav/dronenode.hpp"
+#include "autopilot/controllernode.hpp"
 #include <QProcess>
 
 #include "nav_msgs/Odometry.h"

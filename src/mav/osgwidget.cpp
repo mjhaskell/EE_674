@@ -1,5 +1,5 @@
-#include "osgwidget.hpp"
-#include "droneupdatecallback.hpp"
+#include "mav/osgwidget.hpp"
+#include "mav/droneupdatecallback.hpp"
 
 #include <osg/Camera>
 #include <osg/Geode>

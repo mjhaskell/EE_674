@@ -1,6 +1,6 @@
-#include "mainwindow.hpp"
+#include "mav/mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include "osgwidget.hpp"
+#include "mav/osgwidget.hpp"
 #include <ros/ros.h>
 #include <QToolBar>
 #include <QProcess>
@@ -220,104 +220,6 @@ bool MainWindow::startSimulation()
     }
 //    else
 //        m_controller_node.startNode();
-    if (m_ui->e_radio->isChecked())
-    {
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 0;
-            m_de = -3.75;
-            m_dr = 0;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-
-        auto t_start{std::chrono::high_resolution_clock::now()};
-        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 28.0) {}
-        // wait for a little bit
-
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 0;
-            m_de = 3.75;
-            m_dr = 0;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-    }
-    else if (m_ui->r_radio->isChecked())
-    {
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 0;
-            m_de = 0;
-            m_dr = 2.75;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-
-        auto t_start{std::chrono::high_resolution_clock::now()};
-        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 30.0) {}
-        // wait for a little bit
-
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 0;
-            m_de = 0;
-            m_dr = -2.75*2;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-
-        t_start = std::chrono::high_resolution_clock::now();
-        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 30.0) {}
-        // wait for a little bit
-
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 0;
-            m_de = 0;
-            m_dr = 2.75;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-    }
-    else if (m_ui->a_radio->isChecked())
-    {
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 2.75;
-            m_de = 0;
-            m_dr = 0;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-
-        auto t_start{std::chrono::high_resolution_clock::now()};
-        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 28.0) {}
-        // wait for a little bit
-
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = -2.75*2;
-            m_de = 0;
-            m_dr = 0;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-
-        t_start = std::chrono::high_resolution_clock::now();
-        while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < 28.0) {}
-        // wait for a little bit
-
-//        for (int i{0}; i < 5000; i++)
-//        {
-            m_da = 2.75;
-            m_de = 0;
-            m_dr = 0;
-            m_dt = 0;
-//        }
-        this->updatePoseFromSliders();
-    }
 
     return true;
 }
@@ -397,35 +299,35 @@ void MainWindow::closeWithWarning()
 
 void MainWindow::on_roscore_button_clicked()
 {
-//    if (!m_drone_node.rosIsConnected())
-//    {
-//        m_ui->master_group->setEnabled(false);
-//        m_ui->core_group->setEnabled(false);
-//        m_ui->roscore_button->setStatusTip(tr(""));
-//        int msg_disp_time{5000};
-//        m_ui->statusbar->showMessage(tr("Starting ROS core"),msg_disp_time);
-//        this->startRosCore();
-//        m_ui->statusbar->showMessage(tr("ROS core has been started"),msg_disp_time);
-//    }
-//    this->updateRosStatus();
+    if (!m_drone_node.rosIsConnected())
+    {
+        m_ui->master_group->setEnabled(false);
+        m_ui->core_group->setEnabled(false);
+        m_ui->roscore_button->setStatusTip(tr(""));
+        int msg_disp_time{5000};
+        m_ui->statusbar->showMessage(tr("Starting ROS core"),msg_disp_time);
+        this->startRosCore();
+        m_ui->statusbar->showMessage(tr("ROS core has been started"),msg_disp_time);
+    }
+    this->updateRosStatus();
 }
 
 void MainWindow::on_ros_check_box_clicked()
 {
-//    if (m_ui->ros_check_box->isChecked())
-//    {
-//        m_ui->ros_label->show();
-//        m_ui->connection_label->show();
-//        m_ui->view_ros_connection_status->setChecked(true);
-//    }
-//    else
-//    {
-//        m_ui->ros_label->hide();
-//        m_ui->connection_label->hide();
-//        m_ui->view_ros_connection_status->setChecked(false);
-//    }
-//    m_ui->ros_tab_widget->setEnabled(m_ui->ros_check_box->isChecked());
-//    m_drone_node.setUseRos(m_ui->ros_check_box->isChecked());
+    if (m_ui->ros_check_box->isChecked())
+    {
+        m_ui->ros_label->show();
+        m_ui->connection_label->show();
+        m_ui->view_ros_connection_status->setChecked(true);
+    }
+    else
+    {
+        m_ui->ros_label->hide();
+        m_ui->connection_label->hide();
+        m_ui->view_ros_connection_status->setChecked(false);
+    }
+    m_ui->ros_tab_widget->setEnabled(m_ui->ros_check_box->isChecked());
+    m_drone_node.setUseRos(m_ui->ros_check_box->isChecked());
 }
 
 void MainWindow::on_view_ros_settings_panel_triggered()
@@ -468,25 +370,25 @@ void MainWindow::on_view_ros_connection_status_triggered()
 
 void MainWindow::on_master_connect_button_clicked()
 {
-//    this->disableOtherConnectionOptions();
-//    m_ui->statusbar->showMessage(tr("Trying to connect to ROS master"));
-//    if (m_ui->use_env_check_box->isChecked())
-//    {
-//        if (!m_drone_node.init())
-//            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure roscore is running and try again."));
-//        else
-//            this->onSuccessfulMasterConnection();
-//    }
-//    else
-//    {
-//        if (!m_drone_node.init(m_ui->master_line_edit->text().toStdString(),m_ui->host_line_edit->text().toStdString(),m_use_ros_ip))
-//            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure the provided ROS_MASTER_URI and ROS_IP/HOSTNAME are correct. ROS will not "
-//                                                                       "let you change these values once you first try to connect. If they are invalid, you "
-//                                                                       "will need to restart the application and try again. If the values are correct, make "
-//                                                                       "sure the ROS core is running and try to connect again."));
-//        else
-//            this->onSuccessfulMasterConnection();
-//    }
+    this->disableOtherConnectionOptions();
+    m_ui->statusbar->showMessage(tr("Trying to connect to ROS master"));
+    if (m_ui->use_env_check_box->isChecked())
+    {
+        if (!m_drone_node.init())
+            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure roscore is running and try again."));
+        else
+            this->onSuccessfulMasterConnection();
+    }
+    else
+    {
+        if (!m_drone_node.init(m_ui->master_line_edit->text().toStdString(),m_ui->host_line_edit->text().toStdString(),m_use_ros_ip))
+            QMessageBox::warning(this,tr("NO ROS MASTER DETECTED!"),tr("Make sure the provided ROS_MASTER_URI and ROS_IP/HOSTNAME are correct. ROS will not "
+                                                                       "let you change these values once you first try to connect. If they are invalid, you "
+                                                                       "will need to restart the application and try again. If the values are correct, make "
+                                                                       "sure the ROS core is running and try to connect again."));
+        else
+            this->onSuccessfulMasterConnection();
+    }
 }
 
 void MainWindow::disableOtherConnectionOptions()
@@ -592,28 +494,28 @@ void MainWindow::onToolbarVisibilityChanged(bool visible)
 
 void MainWindow::populateTopicsComboBox()
 {
-//    m_ui->topics_combo_box->clear();
-//    std::string topics{m_drone_node.getOdometryTopics()};
-//    QString str{QString::fromUtf8(topics.c_str())};
-//    QStringList list{str.split(",")};
-//    m_ui->topics_combo_box->addItems(list);
-//        m_ui->topics_combo_box->removeItem(m_ui->topics_combo_box->count()-1);
+    m_ui->topics_combo_box->clear();
+    std::string topics{m_drone_node.getOdometryTopics()};
+    QString str{QString::fromUtf8(topics.c_str())};
+    QStringList list{str.split(",")};
+    m_ui->topics_combo_box->addItems(list);
+        m_ui->topics_combo_box->removeItem(m_ui->topics_combo_box->count()-1);
 }
 
 void MainWindow::on_scan_button_clicked()
 {
-//    populateTopicsComboBox();
-//    int display_time{5000};
-//    m_ui->statusbar->showMessage(tr("Finished scanning for Odometry topics and re-populated list"),display_time);
+    populateTopicsComboBox();
+    int display_time{5000};
+    m_ui->statusbar->showMessage(tr("Finished scanning for Odometry topics and re-populated list"),display_time);
 }
 
 void MainWindow::on_subscribe_button_clicked()
 {
-//    QString topic{m_ui->topics_combo_box->currentText()};
-//    m_drone_node.setupRosComms(topic.toStdString());
-//    QString message{"Subscribed to the selected topic: "};
-//    int display_time{5000};
-//    m_ui->statusbar->showMessage(message+topic,display_time);
+    QString topic{m_ui->topics_combo_box->currentText()};
+    m_drone_node.setupRosComms(topic.toStdString());
+    QString message{"Subscribed to the selected topic: "};
+    int display_time{5000};
+    m_ui->statusbar->showMessage(message+topic,display_time);
 }
 
 void MainWindow::on_reset_triggered()
@@ -631,11 +533,11 @@ void MainWindow::on_view_main_toolbar_triggered()
 
 void MainWindow::on_set_waypoint_button_clicked()
 {
-//    double north{m_ui->north_spin->value()};
-//    double east{m_ui->east_spin->value()};
-//    double height{m_ui->height_spin->value()};
-//    double yaw_radians{osg::DegreesToRadians(m_ui->yaw_spin->value())};
-//    Eigen::Vector4d ref_cmd{north,east,height,yaw_radians};
+    double north{m_ui->north_spin->value()};
+    double east{m_ui->east_spin->value()};
+    double height{m_ui->height_spin->value()};
+    double yaw_radians{osg::DegreesToRadians(m_ui->yaw_spin->value())};
+    Eigen::Vector4d ref_cmd{north,east,height,yaw_radians};
 //    m_controller_node.setRefCmd(ref_cmd);
 }
 

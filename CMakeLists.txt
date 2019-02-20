@@ -6,7 +6,7 @@ add_subdirectory(lib/dynamics)
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs roslib)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs nav_msgs roslib)
 find_package(Eigen3 REQUIRED)
 find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgDB
@@ -28,7 +28,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     lib/dynamics/include/geometry/include/
     )
 
-catkin_package(INCLUDE_DIRS include CATKIN_DEPENDS roscpp std_msgs roslib)
+catkin_package(
+    INCLUDE_DIRS include 
+    CATKIN_DEPENDS roscpp std_msgs roslib nav_msgs
+    )
 
 file(COPY obj DESTINATION devel/lib/fixedwing_sim)
 
@@ -39,23 +42,23 @@ set(CMAKE_AUTOMOC ON)
 #set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-file(GLOB_RECURSE MYSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
-file(GLOB MYFORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
-file(GLOB MYICONS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} icons/*.qrc)
-file(GLOB_RECURSE MYMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/*.hpp)
+file(GLOB_RECURSE MAVSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/mav/*.cpp)
+file(GLOB MAVFORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
+file(GLOB MAVICONS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} icons/*.qrc)
+file(GLOB_RECURSE MAVMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/mav/*.hpp)
 file(GLOB_RECURSE TESTSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS test/*.cpp)
 
-QT5_WRAP_UI(QT_FORMS_HPP ${MYFORMS})
+QT5_WRAP_UI(QT_FORMS_HPP ${MAVFORMS})
 
-add_executable(${PROJECT_NAME}
-   ${MYSOURCE}
-   ${MYICONS}
-   ${MYOBJ}
-   ${MYMOC}
+add_executable(mav
+   ${MAVSOURCE}
+   ${MAVICONS}
+   ${MAVOBJ}
+   ${MAVMOC}
    ${QT_FORMS_HPP}
    )
 
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(mav
     ${QT_LIBRARIES}
     ${catkin_LIBRARIES}
     ${OPENSCENEGRAPH_LIBRARIES}
@@ -66,4 +69,4 @@ target_link_libraries(${PROJECT_NAME}
     Dynamics
     )
 
-install(TARGETS fixedwing_sim RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(TARGETS mav RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

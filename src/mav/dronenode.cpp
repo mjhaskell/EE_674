@@ -1,4 +1,4 @@
-#include "dronenode.hpp"
+#include "mav/dronenode.hpp"
 //#include "dynamics/drone.hpp"
 #include <ros/ros.h>
 #include <string>
@@ -123,11 +123,7 @@ std::string DroneNode::getOdometryTopics()
 
 void DroneNode::updateInputs(const fixedwing::Input* inputs)
 {
-//    auto t_start{std::chrono::high_resolution_clock::now()};
     m_inputs += *inputs;
-//    while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < m_rate*3) {}
-
-//    m_inputs = m_drone.getEquilibriumInputs();
 }
 
 void DroneNode::updateWind(const Eigen::Vector3d* wind)

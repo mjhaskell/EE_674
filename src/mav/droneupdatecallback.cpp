@@ -1,4 +1,4 @@
-#include "droneupdatecallback.hpp"
+#include "mav/droneupdatecallback.hpp"
 #include <osg/PositionAttitudeTransform>
 #include <osgGA/TrackballManipulator>
 
