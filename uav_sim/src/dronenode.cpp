@@ -138,6 +138,7 @@ void DroneNode::runRosNode()
     {
         this->updateDynamics();
         m_state_pub.publish(m_state_msg);
+        emit statesChanged(&m_states);
         ros::spinOnce();
         publish_rate.sleep();
     }

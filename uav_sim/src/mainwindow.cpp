@@ -72,7 +72,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::readSettings()
 {
-    QSettings settings{"Qt-Ros Package", "CopterSim"};
+    QSettings settings{"Qt-Ros Package", "uavSim"};
     QString master_url{settings.value("master_url",QString{"http://localhost:11311/"}).toString()};
     QString host_url{settings.value("host_url", QString{"localhost"}).toString()};
     m_ui->master_line_edit->setText(master_url);
@@ -93,7 +93,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-    QSettings settings("Qt-Ros Package", "CopterSim");
+    QSettings settings("Qt-Ros Package", "uavSim");
     if (m_ui->remember_check_box->isChecked())
     {
         settings.setValue("master_url",m_ui->master_line_edit->text());
