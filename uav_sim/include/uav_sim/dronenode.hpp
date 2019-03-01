@@ -1,12 +1,13 @@
 #ifndef DRONENODE_HPP
 #define DRONENODE_HPP
 
+#include "dynamics/fixedwing.hpp"
 #include <ros/ros.h>
 #include <QThread>
-#include "nav_msgs/Odometry.h"
-#include "dynamics/fixedwing.hpp"
+#include "uav_msgs/State.h"
+#include "uav_msgs/Delta.h"
 
-namespace quad
+namespace uav
 {
 
 class DroneNode : public QThread
@@ -24,12 +25,12 @@ public:
     bool startNode();
     void stopRunning();
     void resetNode();
-    std::string getOdometryTopics();
-    void setupRosComms(const std::string topic="/sim_states");
+    std::string getStateTopics();
+    void setupRosComms(const std::string topic="/states/truth");
 
 signals:
     void feedbackStates(const dyn::State* states);
-    void statesChanged(nav_msgs::Odometry* odom);
+    void statesChanged(fixedwing::State* state);
     void rosLostConnection();
 
 public slots:
@@ -40,8 +41,8 @@ protected:
     void runRosNode();
     void runNode();
     void updateDynamics();
-    void stateCallback(const nav_msgs::OdometryConstPtr& msg);
-    void resetOdometry();
+    void deltaCallback(const uav_msgs::DeltaConstPtr& msg);
+    void resetState();
 
 private:
     int m_argc;
@@ -52,11 +53,11 @@ private:
     FixedWing m_drone;
     double m_rate;
     fixedwing::Input m_inputs;
-    dyn::State m_states;
-    nav_msgs::Odometry m_odom;
-    nav_msgs::Odometry m_sub_odom;
-    ros::Subscriber m_state_sub;
-    ros::Subscriber m_odom_sub;
+    fixedwing::State m_states;
+    uav_msgs::State m_state_msg;
+//    uav_msgs::State m_sub_odom;
+//    ros::Subscriber m_state_sub;
+    ros::Subscriber m_delta_sub;
     ros::Publisher m_state_pub;
     bool m_ros_is_connected;
     bool m_is_running;

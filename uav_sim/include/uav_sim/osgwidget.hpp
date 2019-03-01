@@ -10,8 +10,8 @@
 #include <osgGA/TrackballManipulator>
 #include <osgGA/NodeTrackerManipulator>
 #include <osgText/Text>
-#include <mav/dronenode.hpp>
-#include "mav/droneupdatecallback.hpp"
+#include "uav_sim/dronenode.hpp"
+#include "uav_sim/droneupdatecallback.hpp"
 
 class OSGWidget : public QOpenGLWidget
 {
@@ -23,7 +23,7 @@ public:
   void resetManipulatorView();
 
 public slots:
-  void updateDroneStates(nav_msgs::Odometry* odom);
+  void updateDroneStates(fixedwing::State* state);
 
 protected:
   virtual void paintEvent(QPaintEvent* paintEvent);

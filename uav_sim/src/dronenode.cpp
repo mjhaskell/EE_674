@@ -1,12 +1,12 @@
-#include "mav/dronenode.hpp"
+#include "uav_sim/dronenode.hpp"
 //#include "dynamics/drone.hpp"
 #include <ros/ros.h>
 #include <string>
-#include "nav_msgs/Odometry.h"
+#include "uav_msgs/State.h"
 #include "geometry/quat.h"
 #include <chrono>
 
-namespace quad
+namespace uav
 {
 
 DroneNode::DroneNode(int argc, char** argv) :
@@ -14,7 +14,7 @@ DroneNode::DroneNode(int argc, char** argv) :
     m_argv{argv},
     m_use_ros{false},
     m_rate{m_drone.getDt()},
-    m_states{m_drone.getStates()},
+    m_states{m_drone.getFixedwingStates()},
     m_ros_is_connected{false},
     m_is_running{false}
 {
@@ -100,13 +100,13 @@ void DroneNode::stopRunning()
 void DroneNode::resetNode()
 {
     m_drone.resetStates();
-    m_states = m_drone.getStates();
+    m_states = m_drone.getFixedwingStates();
     m_inputs = m_drone.getEquilibriumInputs();
-    this->resetOdometry();
-    emit statesChanged(&m_odom);
+    this->resetState();
+    emit statesChanged(&m_states);
 }
 
-std::string DroneNode::getOdometryTopics()
+std::string DroneNode::getStateTopics()
 {
     ros::master::V_TopicInfo master_topics;
     ros::master::getTopics(master_topics);
@@ -115,7 +115,7 @@ std::string DroneNode::getOdometryTopics()
     for (ros::master::V_TopicInfo::iterator it = master_topics.begin();it != master_topics.end();it++)
     {
         const ros::master::TopicInfo &info{*it};
-        if (info.datatype == "nav_msgs/Odometry")
+        if (info.datatype == "uav_msgs/Delta")
             topics << info.name << ",";
     }
     return topics.str();
@@ -137,7 +137,7 @@ void DroneNode::runRosNode()
     while (ros::ok() && ros::master::check() && m_is_running)
     {
         this->updateDynamics();
-        m_state_pub.publish(m_odom);
+        m_state_pub.publish(m_state_msg);
         ros::spinOnce();
         publish_rate.sleep();
     }
@@ -154,8 +154,8 @@ void DroneNode::runNode()
     {
         auto t_start{std::chrono::high_resolution_clock::now()};
         this->updateDynamics();
-        emit feedbackStates(&m_states);
-        emit statesChanged(&m_odom);
+//        emit feedbackStates(&m_states);
+        emit statesChanged(&m_states);
         while(std::chrono::duration<double,std::milli>(std::chrono::high_resolution_clock::now()-t_start).count() < m_rate) {}
     }
 }
@@ -164,63 +164,81 @@ void DroneNode::setupRosComms(const std::string topic)
 {
     ros::start();
     ros::NodeHandle nh;
-    uint32_t states_queue_size{50};
-    m_state_sub = nh.subscribe(topic, states_queue_size, &DroneNode::stateCallback, this);
-    m_state_pub = nh.advertise<nav_msgs::Odometry>("sim_states", states_queue_size);
+    uint32_t queue_size{50};
+    m_delta_sub = nh.subscribe(topic, queue_size, &DroneNode::deltaCallback, this);
+    m_state_pub = nh.advertise<uav_msgs::State>("states/truth", queue_size);
 }
 
 void DroneNode::updateDynamics()
 {
     m_drone.sendDeltas(m_inputs);
-    m_states = m_drone.getStates();
+    m_states = m_drone.getFixedwingStates();
 
-    m_odom.pose.pose.position.x = m_states.p(0);
-    m_odom.pose.pose.position.y = m_states.p(1);
-    m_odom.pose.pose.position.z = m_states.p(2);
+    m_state_msg.pn = m_states.dyn.p(0);
+    m_state_msg.pe = m_states.dyn.p(1);
+    m_state_msg.h = -m_states.dyn.p(2);
 
-    m_odom.twist.twist.linear.x = m_states.v(0);
-    m_odom.twist.twist.linear.y = m_states.v(1);
-    m_odom.twist.twist.linear.z = m_states.v(2);
+    Eigen::Vector3d euler{m_states.dyn.q.euler()}; 
 
-    m_odom.pose.pose.orientation.w = m_states.q.w();
-    m_odom.pose.pose.orientation.x = m_states.q.x();
-    m_odom.pose.pose.orientation.y = m_states.q.y();
-    m_odom.pose.pose.orientation.z = m_states.q.z();
+    m_state_msg.phi = euler(0);
+    m_state_msg.theta = euler(1);
+    m_state_msg.psi = euler(2);
 
-    m_odom.twist.twist.angular.x = m_states.w(0);
-    m_odom.twist.twist.angular.y = m_states.w(1);
-    m_odom.twist.twist.angular.z = m_states.w(2);
+    m_state_msg.p = m_states.dyn.w(0);
+    m_state_msg.q = m_states.dyn.w(1);
+    m_state_msg.r = m_states.dyn.w(2);
+
+    m_state_msg.Va = m_states.Va;
+    m_state_msg.alpha = m_states.alpha;
+    m_state_msg.beta = m_states.beta;
+    m_state_msg.Vg = m_states.Vg;
+    m_state_msg.gamma = m_states.gamma;
+    m_state_msg.chi = m_states.chi;
+
+    m_state_msg.wn = m_states.wn;
+    m_state_msg.we = m_states.we;
+    m_state_msg.bx = m_states.bx;
+    m_state_msg.by = m_states.by;
+    m_state_msg.bz = m_states.bz;
 
     if (m_use_ros)
-        m_odom.header.stamp = ros::Time::now();
+        m_state_msg.header.stamp = ros::Time::now();
 }
 
-void DroneNode::stateCallback(const nav_msgs::OdometryConstPtr& msg)
+void DroneNode::deltaCallback(const uav_msgs::DeltaConstPtr& msg)
 {
-    m_sub_odom.pose.pose.position.x = msg->pose.pose.position.x;
-    m_sub_odom.pose.pose.position.y = msg->pose.pose.position.y;
-    m_sub_odom.pose.pose.position.z = msg->pose.pose.position.z;
-    m_sub_odom.pose.pose.orientation.w = msg->pose.pose.orientation.w;
-    m_sub_odom.pose.pose.orientation.x = msg->pose.pose.orientation.x;
-    m_sub_odom.pose.pose.orientation.y = msg->pose.pose.orientation.y;
-    m_sub_odom.pose.pose.orientation.z = msg->pose.pose.orientation.z;
-    m_sub_odom.twist.twist.linear.x = msg->twist.twist.linear.x;
-    m_sub_odom.twist.twist.linear.y = msg->twist.twist.linear.y;
-    m_sub_odom.twist.twist.linear.z = msg->twist.twist.linear.z;
-
-    emit feedbackStates(&m_states);
-    emit statesChanged(&m_sub_odom);
+    m_inputs.dt = msg->dt;
+    m_inputs.da = msg->da;
+    m_inputs.de = msg->de;
+    m_inputs.dr = msg->dr;
 }
 
-void DroneNode::resetOdometry()
+void DroneNode::resetState()
 {
-    m_odom.pose.pose.position.x = 0;
-    m_odom.pose.pose.position.y = 0;
-    m_odom.pose.pose.position.z = 0;
-    m_odom.pose.pose.orientation.w = 1;
-    m_odom.pose.pose.orientation.x = 0;
-    m_odom.pose.pose.orientation.y = 0;
-    m_odom.pose.pose.orientation.z = 0;
+    m_state_msg.pn = 0;
+    m_state_msg.pe = 0;
+    m_state_msg.h = 100;
+
+    m_state_msg.phi = 0;
+    m_state_msg.theta = 0;
+    m_state_msg.psi = 0;
+
+    m_state_msg.p = 0;
+    m_state_msg.q = 0;
+    m_state_msg.r = 0;
+
+    m_state_msg.Va = 25.0;
+    m_state_msg.alpha = 0;
+    m_state_msg.beta = 0;
+    m_state_msg.Vg = m_state_msg.Va;
+    m_state_msg.gamma = 0;
+    m_state_msg.chi = 0;
+
+    m_state_msg.wn = 0;
+    m_state_msg.we = 0;
+    m_state_msg.bx = 0;
+    m_state_msg.by = 0;
+    m_state_msg.bz = 0;
 }
 
 } // end namespace quad

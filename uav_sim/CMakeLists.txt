@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.4)
-project(fixedwing_sim)
+project(uav_sim)
 
 add_subdirectory(lib/dynamics)
 
 find_package(Qt5Widgets)
 find_package(Qt5Gui)
 find_package(Qt5Core)
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs nav_msgs roslib)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs roslib uav_msgs)
 find_package(Eigen3 REQUIRED)
 find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgDB
@@ -14,6 +14,11 @@ find_package(OpenSceneGraph REQUIRED COMPONENTS
     osgUtil
     osgViewer
     osgText
+    )
+
+catkin_package(
+    INCLUDE_DIRS include 
+    CATKIN_DEPENDS roscpp std_msgs roslib uav_msgs
     )
 
 get_target_property(QtCore_location Qt5::Core LOCATION)
@@ -28,12 +33,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     lib/dynamics/include/geometry/include/
     )
 
-catkin_package(
-    INCLUDE_DIRS include 
-    CATKIN_DEPENDS roscpp std_msgs roslib nav_msgs
-    )
-
-file(COPY obj DESTINATION devel/lib/fixedwing_sim)
+file(COPY obj DESTINATION devel/lib/uav_sim)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 1)
@@ -42,15 +42,18 @@ set(CMAKE_AUTOMOC ON)
 #set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-file(GLOB_RECURSE MAVSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/mav/*.cpp)
+file(GLOB_RECURSE MAVSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+    FOLLOW_SYMLINKS src/*.cpp)
 file(GLOB MAVFORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ui/*.ui)
 file(GLOB MAVICONS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} icons/*.qrc)
-file(GLOB_RECURSE MAVMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/mav/*.hpp)
-file(GLOB_RECURSE TESTSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS test/*.cpp)
+file(GLOB_RECURSE MAVMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+    FOLLOW_SYMLINKS include/uav_sim/*.hpp)
+file(GLOB_RECURSE TESTSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} 
+    FOLLOW_SYMLINKS test/*.cpp)
 
 QT5_WRAP_UI(QT_FORMS_HPP ${MAVFORMS})
 
-add_executable(mav
+add_executable(uav_sim
    ${MAVSOURCE}
    ${MAVICONS}
    ${MAVOBJ}
@@ -58,7 +61,7 @@ add_executable(mav
    ${QT_FORMS_HPP}
    )
 
-target_link_libraries(mav
+target_link_libraries(uav_sim
     ${QT_LIBRARIES}
     ${catkin_LIBRARIES}
     ${OPENSCENEGRAPH_LIBRARIES}
@@ -69,4 +72,17 @@ target_link_libraries(mav
     Dynamics
     )
 
-install(TARGETS mav RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(TARGETS uav_sim RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+#file(GLOB_RECURSE APSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/autopilot/*.cpp)
+#file(GLOB_RECURSE APMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/autopilot/*.hpp)
+#
+#add_executable(autopilot
+#    ${APSOURCE}
+#    ${APMOC}
+#    )
+#target_link_libraries(autopilot
+#    ${catkin_LIBRARIES}
+#    ${EIGEN3_LIBRARIES}
+#    Dynamics
+#    )

@@ -1,6 +1,6 @@
-#include "mav/mainwindow.hpp"
+#include "uav_sim/mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include "mav/osgwidget.hpp"
+#include "uav_sim/osgwidget.hpp"
 #include <ros/ros.h>
 #include <QToolBar>
 #include <QProcess>
@@ -54,12 +54,12 @@ MainWindow::~MainWindow()
 void MainWindow::setupSignalsAndSlots()
 {
     connect(m_main_toolbar, &QToolBar::visibilityChanged, this, &MainWindow::onToolbarVisibilityChanged);
-//    connect(&m_drone_node, &quad::DroneNode::feedbackStates, &m_controller_node, &quad::ControllerNode::updateStates);
-//    connect(&m_controller_node, &quad::ControllerNode::sendInputs, &m_drone_node, &quad::DroneNode::updateInputs);
-    connect(&m_drone_node, &quad::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
-    connect(&m_drone_node, &quad::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
-    connect(this, &MainWindow::deltasChanged, &m_drone_node, &quad::DroneNode::updateInputs);
-    connect(this, &MainWindow::windChanged, &m_drone_node, &quad::DroneNode::updateWind);
+//    connect(&m_drone_node, &uav::DroneNode::feedbackStates, &m_controller_node, &uav::ControllerNode::updateStates);
+//    connect(&m_controller_node, &uav::ControllerNode::sendInputs, &m_drone_node, &uav::DroneNode::updateInputs);
+    connect(&m_drone_node, &uav::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
+    connect(&m_drone_node, &uav::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
+    connect(this, &MainWindow::deltasChanged, &m_drone_node, &uav::DroneNode::updateInputs);
+    connect(this, &MainWindow::windChanged, &m_drone_node, &uav::DroneNode::updateWind);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -495,7 +495,7 @@ void MainWindow::onToolbarVisibilityChanged(bool visible)
 void MainWindow::populateTopicsComboBox()
 {
     m_ui->topics_combo_box->clear();
-    std::string topics{m_drone_node.getOdometryTopics()};
+    std::string topics{m_drone_node.getStateTopics()};
     QString str{QString::fromUtf8(topics.c_str())};
     QStringList list{str.split(",")};
     m_ui->topics_combo_box->addItems(list);

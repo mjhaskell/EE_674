@@ -1,4 +1,4 @@
-#include "mav/mainwindow.hpp"
+#include "uav_sim/mainwindow.hpp"
 #include <QApplication>
 
 int main(int argc, char *argv[])

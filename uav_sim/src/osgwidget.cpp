@@ -1,5 +1,5 @@
-#include "mav/osgwidget.hpp"
-#include "mav/droneupdatecallback.hpp"
+#include "uav_sim/osgwidget.hpp"
+#include "uav_sim/droneupdatecallback.hpp"
 
 #include <osg/Camera>
 #include <osg/Geode>
@@ -35,7 +35,7 @@ OSGWidget::OSGWidget(QWidget* parent,Qt::WindowFlags flags):
     m_manipulator{new osgGA::NodeTrackerManipulator},
     m_root{new osg::Group},
     m_drone_update_callback{new DroneUpdateCallback},
-    m_path{ros::package::getPath("fixedwing_sim")}
+    m_path{ros::package::getPath("uav_sim")}
 {
     this->setupCameraAndView();
     this->setupEnvironment();
@@ -66,13 +66,13 @@ void OSGWidget::resetManipulatorView()
     m_drone_update_callback->resetManipulator();
 }
 
-void OSGWidget::updateDroneStates(nav_msgs::Odometry* odom)
+void OSGWidget::updateDroneStates(fixedwing::State* state)
 {
-    osg::Vec3d pos{odom->pose.pose.position.x,odom->pose.pose.position.y,odom->pose.pose.position.z};
-    osg::Quat att{odom->pose.pose.orientation.x,
-                 odom->pose.pose.orientation.y,
-                 odom->pose.pose.orientation.z,
-                 odom->pose.pose.orientation.w};
+    osg::Vec3d pos{state->dyn.p(0),state->dyn.p(1),state->dyn.p(2)};
+    osg::Quat att{state->dyn.q.x(),
+                  state->dyn.q.y(),
+                  state->dyn.q.z(),
+                  state->dyn.q.w()};
     m_drone_update_callback->updateStates(pos,att);
 }
 

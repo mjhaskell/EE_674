@@ -2,11 +2,11 @@
 #define MAINWINDOW_HPP
 
 #include <QMainWindow>
-#include "mav/dronenode.hpp"
-#include "autopilot/controllernode.hpp"
+#include "uav_sim/dronenode.hpp"
+//#include "autopilot/controllernode.hpp"
 #include <QProcess>
 
-#include "nav_msgs/Odometry.h"
+#include "uav_msgs/State.h"
 
 namespace Ui
 {
@@ -86,7 +86,7 @@ private:
     int m_argc;
     char** m_argv;
 //    quad::ControllerNode m_controller_node;
-    quad::DroneNode m_drone_node;
+    uav::DroneNode m_drone_node;
     QToolBar *m_main_toolbar{nullptr};
     QProcess *m_process{nullptr};
     bool m_app_started_roscore{false};
