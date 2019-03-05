@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <node name="uav_sim" pkg="uav_sim" type="uav_sim" output="screen">
+    </node>
+
+    <node name="autopilot" pkg="autopilot" type="autopilot">
+        <remap from="states/estimates" to="states/truth"/>
+    </node>
+
+    <node name="plots" pkg="plotter" type="plotter.py">
+    </node>
+
+</launch>
