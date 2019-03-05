@@ -26,7 +26,7 @@ public:
     void stopRunning();
     void resetNode();
     std::string getStateTopics();
-    void setupRosComms(const std::string topic="/states/truth");
+    void setupRosComms(const std::string topic="/autopilot/delta");
 
 signals:
     void feedbackStates(const dyn::State* states);
@@ -48,7 +48,7 @@ private:
     int m_argc;
     char** m_argv;
     bool m_use_ros;
-    std::string m_node_name{"drone_node"};
+    std::string m_node_name{"uav_sim"};
     fixedwing::Params m_p;
     FixedWing m_drone;
     double m_rate;
@@ -59,6 +59,7 @@ private:
 //    ros::Subscriber m_state_sub;
     ros::Subscriber m_delta_sub;
     ros::Publisher m_state_pub;
+    ros::Publisher m_status_pub;
     bool m_ros_is_connected;
     bool m_is_running;
 };

@@ -3,6 +3,7 @@
 #include <ros/ros.h>
 #include <string>
 #include "uav_msgs/State.h"
+#include "uav_msgs/Status.h"
 #include "geometry/quat.h"
 #include <chrono>
 
@@ -87,6 +88,10 @@ bool DroneNode::startNode()
     {
         if (!ros::master::check())
             return false;
+        uav_msgs::Status status;
+        status.reset = false;
+        status.is_flying = true;
+        m_status_pub.publish(status);
     }
     start();
     return true;
@@ -99,6 +104,14 @@ void DroneNode::stopRunning()
 
 void DroneNode::resetNode()
 {
+    if (m_use_ros)
+    {
+        uav_msgs::Status status;
+        status.reset = true;
+        status.is_flying = false;
+        m_status_pub.publish(status);
+    }
+
     m_drone.resetStates();
     m_states = m_drone.getFixedwingStates();
     m_inputs = m_drone.getEquilibriumInputs();
@@ -168,6 +181,7 @@ void DroneNode::setupRosComms(const std::string topic)
     uint32_t queue_size{50};
     m_delta_sub = nh.subscribe(topic, queue_size, &DroneNode::deltaCallback, this);
     m_state_pub = nh.advertise<uav_msgs::State>("states/truth", queue_size);
+    m_status_pub = nh.advertise<uav_msgs::Status>("sim/status", queue_size);
 }
 
 void DroneNode::updateDynamics()
