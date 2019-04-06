@@ -6,7 +6,7 @@ DroneUpdateCallback::DroneUpdateCallback() :
     m_q_i2c{0,0,0,1},
     m_max_angle{osg::DegreesToRadians(17.0)},
     m_pos_offset{0,0,-0.11},
-    m_pos{0,0,-20},
+    m_pos{0,0,-50},
     m_att{0,0,0,1},
     m_eye{-5.0,0,-1.0},
     m_center{0,0,0},
@@ -37,7 +37,7 @@ void DroneUpdateCallback::updateManipulator()
 void DroneUpdateCallback::resetManipulator()
 {
     m_q_i2c.set(0,0,0,1.0);
-    m_pos.set(0,0,-20);
+    m_pos.set(0,0,-50);
     m_att.set(0,0,0,1.0);
     m_center.set(0,0,0);
 //    m_manipulator->setTransformation(m_eye,m_center,m_up);

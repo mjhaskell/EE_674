@@ -6,16 +6,16 @@ namespace ctrl
 Autopilot::Autopilot() :
     m_nh{ros::NodeHandle()},
     m_nh_private{"~"},
-    m_is_running{false},
     m_chi_c{0},
-    m_h_c{0},
-    m_Va_c{0},
+    m_h_c{50},
+    m_Va_c{25},
     m_phi_ff{0},
+    m_is_running{false},
     m_prev_t{0}
 {
     this->setUpControllers();
     uint32_t queue_size{5};
-    m_state_sub = m_nh.subscribe("states/estimates",queue_size,
+    m_state_sub = m_nh.subscribe("states/truth",queue_size,
                                  &Autopilot::stateCallback, this);
     m_status_sub = m_nh.subscribe("sim/status",queue_size,
                                  &Autopilot::statusCallback,this);
@@ -123,7 +123,7 @@ void Autopilot::resetNode()
 {
     m_prev_t = 0.0;
     m_chi_c = 0.0;
-    m_h_c = 100.0;
+    m_h_c = 50.0;
     m_Va_c = 25.0;
     m_cmd.da = 0.0;
     m_cmd.de = 0.0;
