@@ -68,6 +68,7 @@ void Autopilot::stateCallback(const uav_msgs::StateConstPtr& msg)
         double theta_c{m_pitch_from_altitude.update(m_h_c,msg->h,dt)};
         m_cmd.de = m_elevator_from_pitch.update(theta_c,msg->theta,msg->q,dt);
         m_cmd.dt = m_throttle_from_airspeed.update(m_Va_c,msg->Va,dt);
+        m_cmd.header.stamp = ros::Time::now();
 
         m_delta_pub.publish(m_cmd);
 
@@ -76,6 +77,7 @@ void Autopilot::stateCallback(const uav_msgs::StateConstPtr& msg)
         m_state_cmd.phi = phi_c;
         m_state_cmd.theta = theta_c;
         m_state_cmd.chi = m_chi_c;
+        m_state_cmd.header.stamp = ros::Time::now();
 
         m_state_cmd_pub.publish(m_state_cmd);
     }
