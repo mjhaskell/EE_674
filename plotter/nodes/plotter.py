@@ -41,7 +41,7 @@ class PlotWrapper:
         # Subscribe to relevant ROS topics
         rospy.Subscriber('states/truth', State, self.statesCallback)
         rospy.Subscriber('states/estimates', State, self.estimatesCallback)
-        rospy.Subscriber('plot/commanded_states', State, self.cmdCallback)
+        rospy.Subscriber('states/commanded', State, self.cmdCallback)
 
         # Update the plots
         rate = rospy.Rate(update_freq)
