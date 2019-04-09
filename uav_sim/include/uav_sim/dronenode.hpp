@@ -27,15 +27,13 @@ public:
     void resetNode();
     std::string getStateTopics();
     void setupRosComms(const std::string topic="/command/delta");
+    void updateWind(const Eigen::Vector3d& wind);
+    void setUseGust(const bool use);
 
 signals:
     void feedbackStates(const dyn::State* states);
     void statesChanged(fixedwing::State* state);
     void rosLostConnection();
-
-public slots:
-    void updateInputs(const fixedwing::Input* inputs);
-    void updateWind(const Eigen::Vector3d* wind);
 
 protected:
     void runRosNode();

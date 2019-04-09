@@ -56,8 +56,6 @@ void MainWindow::setupSignalsAndSlots()
     connect(m_main_toolbar, &QToolBar::visibilityChanged, this, &MainWindow::onToolbarVisibilityChanged);
     connect(&m_drone_node, &uav::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
     connect(&m_drone_node, &uav::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
-    connect(this, &MainWindow::deltasChanged, &m_drone_node, &uav::DroneNode::updateInputs);
-    connect(this, &MainWindow::windChanged, &m_drone_node, &uav::DroneNode::updateWind);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -235,16 +233,6 @@ void MainWindow::resetSimulation()
     m_drone_node.stopRunning();
     m_drone_node.resetNode();
     m_osg_widget->resetManipulatorView();
-
-//    m_ui->wn_slider->setSliderPosition(0);
-//    m_ui->we_slider->setSliderPosition(0);
-//    m_de = 0;
-//    m_dt = 0;
-//    m_da = 0;
-//    m_dr = 0;
-//    m_wn = 0;
-//    m_we = 0;
-//    this->updatePoseFromSliders();
 }
 
 QAction* MainWindow::createRosPanelAction()
@@ -553,33 +541,27 @@ void MainWindow::on_pause_triggered()
     startOrPauseSim();
 }
 
-void MainWindow::updatePoseFromSliders()
+void MainWindow::updateWindFromSliders()
 {
-    fixedwing::Input deltas;
-    deltas.de = m_de;
-    deltas.dt = m_dt;
-    deltas.da = m_da;
-    deltas.dr = m_dr;
+    Eigen::Vector3d wind;
+    wind << m_wn, m_we, 0.0;
 
-    emit deltasChanged(&deltas);
+    m_drone_node.updateWind(wind);
 }
 
-//void MainWindow::updateWindFromSliders()
-//{
-//    Eigen::Vector3d wind;
-//    wind << m_wn, m_we, 0.0;
+void MainWindow::on_wn_spin_valueChanged(double value)
+{
+    m_wn = value;
+    this->updateWindFromSliders();
+}
 
-//    emit windChanged(&wind);
-//}
+void MainWindow::on_we_spin_valueChanged(double value)
+{
+    m_we = value;
+    this->updateWindFromSliders();
+}
 
-//void MainWindow::on_wn_slider_sliderMoved(int position)
-//{
-//    m_wn = double(position);
-//    this->updateWindFromSliders();
-//}
-
-//void MainWindow::on_we_slider_sliderMoved(int position)
-//{
-//    m_we = double(position);
-//    this->updateWindFromSliders();
-//}
+void MainWindow::on_gust_check_box_toggled(bool checked)
+{
+    m_drone_node.setUseGust(checked);
+}

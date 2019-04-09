@@ -1,5 +1,4 @@
 #include "uav_sim/dronenode.hpp"
-//#include "dynamics/drone.hpp"
 #include <ros/ros.h>
 #include <string>
 #include "uav_msgs/State.h"
@@ -134,14 +133,14 @@ std::string DroneNode::getStateTopics()
     return topics.str();
 }
 
-void DroneNode::updateInputs(const fixedwing::Input* inputs)
+void DroneNode::updateWind(const Eigen::Vector3d& wind)
 {
-    m_inputs += *inputs;
+    m_drone.setWindSS(wind);
 }
 
-void DroneNode::updateWind(const Eigen::Vector3d* wind)
+void DroneNode::setUseGust(const bool use)
 {
-    m_drone.setWindSS(*wind);
+    m_drone.setUseGust(use);
 }
 
 void DroneNode::runRosNode()

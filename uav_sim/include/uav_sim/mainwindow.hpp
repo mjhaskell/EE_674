@@ -23,10 +23,6 @@ public:
     explicit MainWindow(int argc,char** argv,QWidget *parent = nullptr);
     ~MainWindow();
 
-signals:
-    void deltasChanged(fixedwing::Input* inputs);
-    void windChanged(Eigen::Vector3d* wind);
-
 protected:
     void setupSignalsAndSlots();
     void closeEvent(QCloseEvent *);
@@ -50,10 +46,13 @@ protected:
     void onToolbarVisibilityChanged(bool visible);
 
     void updatePoseFromSliders();
-//    void updateWindFromSliders();
+    void updateWindFromSliders();
 
 public slots:
     void closeWithWarning();
+
+private slots:
+    void on_gust_check_box_toggled(bool checked);
 
 private slots:
     void on_start_triggered();
@@ -76,16 +75,14 @@ private slots:
     void on_set_weights_button_clicked();
     void on_set_rates_button_clicked();
     void on_pause_triggered();
-
-//    void on_wn_slider_sliderMoved(int position);
-//    void on_we_slider_sliderMoved(int position);
+    void on_wn_spin_valueChanged(double value);
+    void on_we_spin_valueChanged(double arg1);
 
 private:
     Ui::MainWindow *m_ui{nullptr};
     OSGWidget *m_osg_widget{nullptr};
     int m_argc;
     char** m_argv;
-//    quad::ControllerNode m_controller_node;
     uav::DroneNode m_drone_node;
     QToolBar *m_main_toolbar{nullptr};
     QProcess *m_process{nullptr};
