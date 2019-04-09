@@ -54,8 +54,6 @@ MainWindow::~MainWindow()
 void MainWindow::setupSignalsAndSlots()
 {
     connect(m_main_toolbar, &QToolBar::visibilityChanged, this, &MainWindow::onToolbarVisibilityChanged);
-//    connect(&m_drone_node, &uav::DroneNode::feedbackStates, &m_controller_node, &uav::ControllerNode::updateStates);
-//    connect(&m_controller_node, &uav::ControllerNode::sendInputs, &m_drone_node, &uav::DroneNode::updateInputs);
     connect(&m_drone_node, &uav::DroneNode::statesChanged, m_osg_widget, &OSGWidget::updateDroneStates);
     connect(&m_drone_node, &uav::DroneNode::rosLostConnection, this, &MainWindow::closeWithWarning);
     connect(this, &MainWindow::deltasChanged, &m_drone_node, &uav::DroneNode::updateInputs);
@@ -65,7 +63,6 @@ void MainWindow::setupSignalsAndSlots()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     m_drone_node.stopRunning();
-//    m_controller_node.stopRunning();
     this->writeSettings();
     QMainWindow::closeEvent(event);
 }
@@ -218,8 +215,6 @@ bool MainWindow::startSimulation()
                                  tr("Can not start the simulation. Connect to a ros master and try again."));
         return false;
     }
-//    else
-//        m_controller_node.startNode();
 
     return true;
 }
@@ -227,7 +222,6 @@ bool MainWindow::startSimulation()
 void MainWindow::pauseSimulation()
 {
     m_drone_node.stopRunning();
-//    m_controller_node.stopRunning();
 }
 
 void MainWindow::resetSimulation()
@@ -239,9 +233,7 @@ void MainWindow::resetSimulation()
     m_ui->scan_button->setEnabled(true);
     startOrPauseSim();
     m_drone_node.stopRunning();
-//    m_controller_node.stopRunning();
     m_drone_node.resetNode();
-//    m_controller_node.resetNode();
     m_osg_widget->resetManipulatorView();
 
 //    m_ui->wn_slider->setSliderPosition(0);
@@ -285,7 +277,6 @@ void MainWindow::on_start_triggered()
 void MainWindow::on_close_triggered()
 {
     m_drone_node.stopRunning();
-//    m_controller_node.stopRunning();
     this->writeSettings();
     close();
 }
@@ -538,7 +529,6 @@ void MainWindow::on_set_waypoint_button_clicked()
     double height{m_ui->height_spin->value()};
     double yaw_radians{osg::DegreesToRadians(m_ui->yaw_spin->value())};
     Eigen::Vector4d ref_cmd{north,east,height,yaw_radians};
-//    m_controller_node.setRefCmd(ref_cmd);
 }
 
 void MainWindow::on_set_weights_button_clicked()

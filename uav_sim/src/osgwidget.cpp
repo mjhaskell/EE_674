@@ -17,7 +17,10 @@
 #include <QWheelEvent>
 #include <osgDB/ReadFile>
 #include <osgUtil/SmoothingVisitor>
+
 #include <ros/package.h>
+
+//#define TESTING
 
 void OSGWidget::setupTimer()
 {
@@ -35,7 +38,11 @@ OSGWidget::OSGWidget(QWidget* parent,Qt::WindowFlags flags):
     m_manipulator{new osgGA::NodeTrackerManipulator},
     m_root{new osg::Group},
     m_drone_update_callback{new DroneUpdateCallback},
+#ifdef TESTING
+    m_path{"../../../src/EE_674/uav_sim"}
+#else
     m_path{ros::package::getPath("uav_sim")}
+#endif
 {
     this->setupCameraAndView();
     this->setupEnvironment();
@@ -48,7 +55,6 @@ OSGWidget::OSGWidget(QWidget* parent,Qt::WindowFlags flags):
     m_root->addChild(drone_pat);
 
     this->setupManipulators(drone_node.get());
-//    m_manipulator->setTrackNode(drone_pat);
 
     this->setFocusPolicy(Qt::StrongFocus);
     this->setMouseTracking(true);
@@ -304,7 +310,6 @@ void OSGWidget::setupView(osg::Camera* camera)
     m_view->setCamera(camera);
     m_view->setSceneData(m_root.get());
     m_view->addEventHandler(new osgViewer::StatsHandler);
-//    m_view->setCameraManipulator(m_manipulator);
     m_view->home();
     m_view->setLightingMode(osg::View::SKY_LIGHT);
     osg::Light *light{m_view->getLight()};
@@ -376,7 +381,6 @@ osg::Geometry* createFloorGeom()
     osg::ref_ptr<osg::Vec2Array> tex_coords{getTexCoords(repetions)};
     geom->addPrimitiveSet(new osg::DrawArrays(GL_QUADS, 0, 4));
     geom->setTexCoordArray(0, tex_coords.get());
-//    osgUtil::SmoothingVisitor::smooth(*geom);
     geom->setTexCoordArray(0, tex_coords.get(), osg::Array::Binding::BIND_PER_VERTEX);
 
     return geom;
@@ -385,7 +389,6 @@ osg::Geometry* createFloorGeom()
 osg::ref_ptr<osg::Texture2D> createFloorTexture(std::string path)
 {
     osg::ref_ptr<osg::Texture2D> texture{new osg::Texture2D};
-//    osg::ref_ptr<osg::Image> image{osgDB::readImageFile("obj/grass1.jpg")};
     osg::ref_ptr<osg::Image> image{osgDB::readImageFile(path+"/obj/grass1.jpg")};
     texture->setImage(image);
     texture->setUnRefImageDataAfterApply(true);

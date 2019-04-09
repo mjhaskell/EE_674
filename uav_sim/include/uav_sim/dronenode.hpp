@@ -26,7 +26,7 @@ public:
     void stopRunning();
     void resetNode();
     std::string getStateTopics();
-    void setupRosComms(const std::string topic="/autopilot/delta");
+    void setupRosComms(const std::string topic="/command/delta");
 
 signals:
     void feedbackStates(const dyn::State* states);
@@ -55,8 +55,6 @@ private:
     fixedwing::Input m_inputs;
     fixedwing::State m_states;
     uav_msgs::State m_state_msg;
-//    uav_msgs::State m_sub_odom;
-//    ros::Subscriber m_state_sub;
     ros::Subscriber m_delta_sub;
     ros::Publisher m_state_pub;
     ros::Publisher m_status_pub;

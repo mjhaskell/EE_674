@@ -33,7 +33,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
     lib/dynamics/include/geometry/include/
     )
 
-file(COPY obj DESTINATION devel/lib/uav_sim)
+#file(COPY obj DESTINATION devel/lib/uav_sim)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED 1)
@@ -74,15 +74,3 @@ target_link_libraries(uav_sim
 
 install(TARGETS uav_sim RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-#file(GLOB_RECURSE APSOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/autopilot/*.cpp)
-#file(GLOB_RECURSE APMOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/autopilot/*.hpp)
-#
-#add_executable(autopilot
-#    ${APSOURCE}
-#    ${APMOC}
-#    )
-#target_link_libraries(autopilot
-#    ${catkin_LIBRARIES}
-#    ${EIGEN3_LIBRARIES}
-#    Dynamics
-#    )
