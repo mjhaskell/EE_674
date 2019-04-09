@@ -19,10 +19,12 @@ Autopilot::Autopilot() :
                                  &Autopilot::stateCallback, this);
     m_status_sub = m_nh.subscribe("sim/status",queue_size,
                                  &Autopilot::statusCallback,this);
-    m_delta_pub = m_nh.advertise<uav_msgs::Delta>("autopilot/delta",
+    m_cmd_sub = m_nh.subscribe("command/high_level", queue_size,
+                               &Autopilot::cmdCallback, this);
+    m_delta_pub = m_nh.advertise<uav_msgs::Delta>("command/delta",
                                     queue_size);
     m_state_cmd_pub = m_nh.advertise<uav_msgs::State>(
-                                    "plot/commanded_states",queue_size);
+                                    "states/commanded",queue_size);
 }
 
 Autopilot::~Autopilot()

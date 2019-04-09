@@ -31,6 +31,7 @@ private:
     ros::NodeHandle m_nh_private;
     ros::Subscriber m_state_sub;
     ros::Subscriber m_status_sub;
+    ros::Subscriber m_cmd_sub;
     ros::Publisher m_delta_pub;
     ros::Publisher m_state_cmd_pub;
 
