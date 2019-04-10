@@ -22,6 +22,7 @@ protected:
     Eigen::Vector4d h_gps(const Vec7& x, const uav_msgs::State& u);
     Eigen::Vector2d h_pseudo(const Vec7& x, const uav_msgs::State& u);
     void updateJacobians(Vec7 x, uav_msgs::State state);
+    void updateGpsJacobians(Vec7 x, uav_msgs::State state);
 
 private:
     Mat7 m_Q, m_P;
@@ -40,8 +41,10 @@ private:
     Eigen::Vector4d m_h_gps, m_y_gps;
     Eigen::Vector2d m_h_pseudo;
     Mat7 m_A, m_Ad;
-    Eigen::Matrix<double,3,2> m_C;
-    Eigen::Matrix<double,2,3> m_L;
+    Eigen::Matrix<double,2,7> m_C_pseudo;
+    Eigen::Matrix<double,4,7> m_C_gps;
+    Eigen::Matrix<double,7,2> m_L_pseudo;
+    Eigen::Matrix<double,7,4> m_L_gps;
 };
 
 #endif // POSITION_EKF_HPP

@@ -49,6 +49,8 @@ void Observer::sensorCallback(const uav_msgs::SensorsConstPtr& msg)
     m_xhat.bx = 0.0;
     m_xhat.by = 0.0;
     m_xhat.bz = 0.0;
+
+    m_state_pub.publish(m_xhat);
 }
 
 } // end namespace est
