@@ -1,4 +1,5 @@
 #include "estimator/position_ekf.hpp"
+#include <Eigen/Dense>
 
 PositionEKF::PositionEKF() :
     m_N{25},
@@ -55,8 +56,16 @@ void PositionEKF::propagateModel(uav_msgs::State &state)
 
 void PositionEKF::measurementUpdate(uav_msgs::State &state, const uav_msgs::SensorsConstPtr &measurement)
 {
+    static Mat7 I{Mat7::Identity()};
+
     m_h_pseudo = h_pseudo(m_xhat, state);
 
+    Eigen::Matrix4d temp;
+    temp = m_R_pseudo + m_C*m_P*m_C.transpose();
+    m_L = m_P*m_C.transpose()*temp.inverse();
+
+    m_P = (I - m_L*m_C)*m_P*(I-m_L*m_C).transpose() + m_L*m_R_pseudo*m_L.transpose();
+    m_xhat += m_L * -m_h_pseudo; // fix
 }
 
 PositionEKF::Vec7 PositionEKF::f(const PositionEKF::Vec7 &x, const uav_msgs::State &u)
