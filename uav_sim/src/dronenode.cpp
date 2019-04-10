@@ -149,8 +149,15 @@ void DroneNode::runRosNode()
     while (ros::ok() && ros::master::check() && m_is_running)
     {
         this->updateDynamics();
+
+        updateSensorsMsg();
+        m_sensors_pub.publish(m_sensors_msg);
+
+        updateStateMsg();
         m_state_pub.publish(m_state_msg);
+
         emit statesChanged(&m_states);
+
         ros::spinOnce();
         publish_rate.sleep();
     }
@@ -181,18 +188,16 @@ void DroneNode::setupRosComms(const std::string topic)
     m_delta_sub = nh.subscribe(topic, queue_size, &DroneNode::deltaCallback, this);
     m_state_pub = nh.advertise<uav_msgs::State>("states/truth", queue_size);
     m_status_pub = nh.advertise<uav_msgs::Status>("sim/status", queue_size);
+    m_sensors_pub = nh.advertise<uav_msgs::Sensors>("/sensors", queue_size);
 }
 
-void DroneNode::updateDynamics()
+void DroneNode::updateStateMsg()
 {
-    m_drone.sendDeltas(m_inputs);
-    m_states = m_drone.getFixedwingStates();
-
     m_state_msg.pn = m_states.dyn.p(0);
     m_state_msg.pe = m_states.dyn.p(1);
     m_state_msg.h = -m_states.dyn.p(2);
 
-    Eigen::Vector3d euler{m_states.dyn.q.euler()}; 
+    Eigen::Vector3d euler{m_states.dyn.q.euler()};
 
     m_state_msg.phi = euler(0);
     m_state_msg.theta = euler(1);
@@ -217,6 +222,32 @@ void DroneNode::updateDynamics()
 
     if (m_use_ros)
         m_state_msg.header.stamp = ros::Time::now();
+}
+
+void DroneNode::updateSensorsMsg()
+{
+    m_sensors_msg.gps_n = m_sensors.gps_n;
+    m_sensors_msg.gps_e = m_sensors.gps_e;
+    m_sensors_msg.gps_h = m_sensors.gps_h;
+    m_sensors_msg.gps_Vg = m_sensors.gps_Vg;
+    m_sensors_msg.gps_chi = m_sensors.gps_chi;
+    m_sensors_msg.gyro_x = m_sensors.gyro_x;
+    m_sensors_msg.gyro_y = m_sensors.gyro_y;
+    m_sensors_msg.gyro_z = m_sensors.gyro_z;
+    m_sensors_msg.accel_x = m_sensors.accel_x;
+    m_sensors_msg.accel_y = m_sensors.accel_y;
+    m_sensors_msg.accel_z = m_sensors.accel_z;
+    m_sensors_msg.static_pressure = m_sensors.static_pressure;
+    m_sensors_msg.diff_pressure = m_sensors.diff_pressure;
+    if (m_use_ros)
+        m_sensors_msg.header.stamp = ros::Time::now();
+}
+
+void DroneNode::updateDynamics()
+{
+    m_drone.sendDeltas(m_inputs);
+    m_states = m_drone.getFixedwingStates();
+    m_sensors = m_drone.getSensorData();
 }
 
 void DroneNode::deltaCallback(const uav_msgs::DeltaConstPtr& msg)

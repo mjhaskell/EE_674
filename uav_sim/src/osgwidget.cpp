@@ -20,7 +20,7 @@
 
 #include <ros/package.h>
 
-#define TESTING
+//#define TESTING
 
 void OSGWidget::setupTimer()
 {

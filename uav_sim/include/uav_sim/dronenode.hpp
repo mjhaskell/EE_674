@@ -6,6 +6,7 @@
 #include <QThread>
 #include "uav_msgs/State.h"
 #include "uav_msgs/Delta.h"
+#include "uav_msgs/Sensors.h"
 
 namespace uav
 {
@@ -41,6 +42,8 @@ protected:
     void updateDynamics();
     void deltaCallback(const uav_msgs::DeltaConstPtr& msg);
     void resetState();
+    void updateStateMsg();
+    void updateSensorsMsg();
 
 private:
     int m_argc;
@@ -52,10 +55,13 @@ private:
     double m_rate;
     fixedwing::Input m_inputs;
     fixedwing::State m_states;
+    fixedwing::Sensors m_sensors;
+    uav_msgs::Sensors m_sensors_msg;
     uav_msgs::State m_state_msg;
     ros::Subscriber m_delta_sub;
     ros::Publisher m_state_pub;
     ros::Publisher m_status_pub;
+    ros::Publisher m_sensors_pub;
     bool m_ros_is_connected;
     bool m_is_running;
 };

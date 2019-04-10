@@ -6,10 +6,13 @@
     </node>
 
     <node name="autopilot" pkg="autopilot" type="autopilot">
-        <remap from="states/estimates" to="states/truth"/>
+        <!--        <remap from="states/estimates" to="states/truth"/> -->
     </node>
 
-    <node name="plots" pkg="plotter" type="plotter.py">
+    <node name="estimator" pkg="estimator" type="estimator">
+    </node>
+
+    <node name="plots" pkg="plotter" type="plotter.py" output="screen">
     </node>
 
 </launch>

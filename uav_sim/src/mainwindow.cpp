@@ -29,6 +29,7 @@ MainWindow::MainWindow(int argc,char** argv,QWidget *parent) :
     m_ui->topics_group->setEnabled(false);
     this->readSettings();
     this->setupSignalsAndSlots();
+    this->on_ros_check_box_clicked();
 }
 
 MainWindow::~MainWindow()
