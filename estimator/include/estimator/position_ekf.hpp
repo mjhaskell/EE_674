@@ -21,8 +21,9 @@ protected:
     Vec7 f(const Vec7& x, const uav_msgs::State& u);
     Eigen::Vector4d h_gps(const Vec7& x, const uav_msgs::State& u);
     Eigen::Vector2d h_pseudo(const Vec7& x, const uav_msgs::State& u);
-    void updateJacobians(Vec7 x, uav_msgs::State state);
-    void updateGpsJacobians(Vec7 x, uav_msgs::State state);
+    void updateJacobianA(const Vec7& x, const uav_msgs::State& state);
+    void updatePseudoJacobian(const Vec7& x, const uav_msgs::State& state);
+    void updateGpsJacobian(const Vec7& x, const uav_msgs::State& state);
 
 private:
     Mat7 m_Q, m_P;

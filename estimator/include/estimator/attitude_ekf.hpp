@@ -17,7 +17,8 @@ protected:
     void measurementUpdate(uav_msgs::State& state, const uav_msgs::SensorsConstPtr& measurement);
     Eigen::Vector2d f(const Eigen::Vector2d& x, const uav_msgs::State& u);
     Eigen::Vector3d h(const Eigen::Vector2d& x, const uav_msgs::State& u);
-    void updateJacobians(Eigen::Vector2d x, uav_msgs::State state);
+    void updateJacobianA(const Eigen::Vector2d& x, const uav_msgs::State& state);
+    void updateJacobianC(const Eigen::Vector2d& x, const uav_msgs::State& state);
 
 private:
     Eigen::Matrix2d m_Q;

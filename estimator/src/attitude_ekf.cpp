@@ -23,7 +23,6 @@ AttitudeEKF::~AttitudeEKF()
 void AttitudeEKF::update(double ts, const uav_msgs::SensorsConstPtr &meas, uav_msgs::State &state)
 {
     m_ts = ts / double(m_N);
-    updateJacobians(m_xhat, state);
     propagateModel(state);
     measurementUpdate(state, meas);
     state.phi = m_xhat(0);
@@ -37,8 +36,8 @@ void AttitudeEKF::propagateModel(uav_msgs::State &state)
     for (int i{0}; i < m_N; i++)
     {
         m_xhat += m_ts*f(m_xhat,state);
+        updateJacobianA(m_xhat,state);
 
-//        jacobianA(m_xhat, state);
         m_Ad = I_2x2 + m_A*m_ts + m_A*m_A*m_ts*m_ts/2.0;
         m_Gd = m_G*m_ts;
 
@@ -52,7 +51,7 @@ void AttitudeEKF::measurementUpdate(uav_msgs::State &state, const uav_msgs::Sens
     static Eigen::Matrix2d I_2x2{Eigen::Matrix2d::Identity()};
 
     m_h = h(m_xhat, state);
-//    jacobianC(m_xhat, state);
+    updateJacobianC(m_xhat,state);
     m_y << measurement->accel_x, measurement->accel_y, measurement->accel_z;
 
     Eigen::Matrix3d temp;
@@ -82,10 +81,22 @@ Eigen::Vector3d AttitudeEKF::h(const Eigen::Vector2d &x, const uav_msgs::State &
     return _h;
 }
 
-void AttitudeEKF::updateJacobians(Eigen::Vector2d x, uav_msgs::State state)
+void AttitudeEKF::updateJacobianA(const Eigen::Vector2d& x, const uav_msgs::State& state)
 {
     Eigen::Vector2d f_x, f_eps;
     f_x = f(x, state);
+
+    Eigen::Vector2d x_eps;
+    for (int i{0}; i < 2; i++)
+    {
+        x_eps = x;
+        x_eps(i) += m_eps;
+        m_A.col(i) = (f(x_eps, state) - f_x) / m_eps;
+    }
+}
+
+void AttitudeEKF::updateJacobianC(const Eigen::Vector2d &x, const uav_msgs::State &state)
+{
     Eigen::Vector3d h_x, h_eps;
     h_x = h(x,state);
 
@@ -94,7 +105,6 @@ void AttitudeEKF::updateJacobians(Eigen::Vector2d x, uav_msgs::State state)
     {
         x_eps = x;
         x_eps(i) += m_eps;
-        m_A.col(i) = (f(x_eps, state) - f_x) / m_eps;
         m_C.col(i) = (h(x_eps, state) - h_x) / m_eps;
     }
 }
