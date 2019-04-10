@@ -32,7 +32,7 @@ class PlotWrapper:
         self.plotter.define_input_vector('true_state', ['pn','pe','h','Va', 
                   'alpha','beta','phi','theta','chi','p','q','r','Vg','wn',
                   'we','psi','bx','by','bz'])
-        self.plotter.define_input_vector('estimated_state',['pn_e','pe_e','h_e',
+        self.plotter.define_input_vector('estimated_state',['pn_e','pe_e','h_e', 
                   'Va_e','alpha_e','beta_e','phi_e','theta_e','chi_e','p_e',
                   'q_e','r_e','Vg_e','wn_e','we_e','psi_e','bx_e','by_e','bz_e'])
         self.plotter.define_input_vector('commands',['h_c','Va_c','phi_c',
@@ -42,6 +42,8 @@ class PlotWrapper:
         rospy.Subscriber('states/truth', State, self.statesCallback)
         rospy.Subscriber('states/estimates', State, self.estimatesCallback)
         rospy.Subscriber('states/commanded', State, self.cmdCallback)
+
+        self.t0 = rospy.Time.now().to_sec()
 
         # Update the plots
         rate = rospy.Rate(update_freq)
@@ -112,7 +114,7 @@ class PlotWrapper:
                            msg.phi, msg.theta, msg.chi, msg.p, msg.q, msg.r,
                            msg.Vg, msg.wn, msg.we, msg.psi,msg.bx,msg.by,msg.bz]
 
-        self.plotter.add_vector_measurement('true_state', true_state_list, t)
+        self.plotter.add_vector_measurement('true_state',true_state_list,t-self.t0)
 
     def estimatesCallback(self, msg):
         t = msg.header.stamp.to_sec()
@@ -121,14 +123,14 @@ class PlotWrapper:
                            msg.phi, msg.theta, msg.chi, msg.p, msg.q, msg.r,
                            msg.Vg, msg.wn, msg.we, msg.psi,msg.bx,msg.by,msg.bz]
 
-        self.plotter.add_vector_measurement('estimated_state',est_state_list,t)
+        self.plotter.add_vector_measurement('estimated_state',est_state_list,t-self.t0)
 
     def cmdCallback(self, msg):
         t = msg.header.stamp.to_sec()
 
         cmd_state_list = [msg.h, msg.Va, msg.phi, msg.theta, msg.chi]
 
-        self.plotter.add_vector_measurement('commands', cmd_state_list, t)
+        self.plotter.add_vector_measurement('commands', cmd_state_list, t-self.t0)
 
 
 if __name__ == '__main__':
