@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.4)
 project(estimator)
 
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs uav_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs geometry_msgs uav_msgs)
 find_package(Eigen3 REQUIRED)
 
 catkin_package(
     INCLUDE_DIRS include 
-    CATKIN_DEPENDS roscpp std_msgs uav_msgs
+    CATKIN_DEPENDS roscpp std_msgs geometry_msgs uav_msgs
     )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
