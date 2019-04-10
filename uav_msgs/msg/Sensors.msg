@@ -1,0 +1,14 @@
+Header header
+float64 gyro_x
+float64 gyro_y
+float64 gyro_z
+float64 accel_x
+float64 accel_y
+float64 accel_z
+float64 static_pressure
+float64 diff_pressure
+float64 gps_n
+float64 gps_e
+float64 gps_h
+float64 gps_Vg
+float64 gps_chi
