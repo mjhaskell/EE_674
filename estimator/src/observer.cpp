@@ -9,6 +9,7 @@ Observer::Observer() :
     m_lpf_static{0.9,0.0},
     m_prev_t{0.0}
 {
+    initializeStateMsg();
     m_rho = m_nh_private.param<double>("rho", 1.2682);
     m_gravity = m_nh_private.param<double>("gravity", 9.80665);
 
@@ -44,14 +45,36 @@ void Observer::sensorCallback(const uav_msgs::SensorsConstPtr& msg)
     m_att_ekf.update(dt, msg, m_xhat);
     m_pos_ekf.update(dt, msg, m_xhat);
 
+    // not estimating alpha
     m_xhat.alpha = m_xhat.theta;
-    m_xhat.beta = 0.0;
-    m_xhat.bx = 0.0;
-    m_xhat.by = 0.0;
-    m_xhat.bz = 0.0;
+
     m_xhat.header.stamp = ros::Time::now();
 
     m_state_pub.publish(m_xhat);
+}
+
+void Observer::initializeStateMsg()
+{
+    m_xhat.pn = 0;
+    m_xhat.pe = 0;
+    m_xhat.h = 50;
+    m_xhat.Va = 25;
+    m_xhat.chi = 0;
+    m_xhat.p = 0;
+    m_xhat.q = 0;
+    m_xhat.r = 0;
+    m_xhat.Vg = 25;
+    m_xhat.phi = 0;
+    m_xhat.theta = 0;
+    m_xhat.psi = 0;
+    m_xhat.bx = 0;
+    m_xhat.by = 0;
+    m_xhat.bz = 0;
+    m_xhat.gamma = 0;
+    m_xhat.alpha = 0;
+    m_xhat.beta = 0;
+    m_xhat.wn = 0;
+    m_xhat.we = 0;
 }
 
 } // end namespace est

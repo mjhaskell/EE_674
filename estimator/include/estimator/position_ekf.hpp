@@ -5,11 +5,11 @@
 #include "uav_msgs/Sensors.h"
 #include "uav_msgs/State.h"
 
+typedef Eigen::Matrix<double,7,7> Mat7;
+typedef Eigen::Matrix<double,7,1> Vec7;
+
 class PositionEKF
 {
-    typedef Eigen::Matrix<double,7,7> Mat7;
-    typedef Eigen::Matrix<double,7,1> Vec7;
-
 public:
     PositionEKF();
     virtual ~PositionEKF();

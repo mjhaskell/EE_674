@@ -19,6 +19,7 @@ public:
 
 protected:
     void sensorCallback(const uav_msgs::SensorsConstPtr& msg);
+    void initializeStateMsg();
 
 private:
     ros::NodeHandle m_nh;
@@ -27,7 +28,6 @@ private:
     ros::Publisher m_state_pub;
 
     uav_msgs::State m_xhat;
-    uav_msgs::Sensors m_meas;
 
     AlphaFilter m_lpf_gyro_x;
     AlphaFilter m_lpf_gyro_y;
@@ -35,7 +35,6 @@ private:
     AlphaFilter m_lpf_accel_x;
     AlphaFilter m_lpf_accel_y;
     AlphaFilter m_lpf_accel_z;
-
     AlphaFilter m_lpf_static;
     AlphaFilter m_lpf_diff;
 

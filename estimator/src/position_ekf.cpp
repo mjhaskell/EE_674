@@ -3,6 +3,7 @@
 
 PositionEKF::PositionEKF() :
     m_N{25},
+    m_ts{.002/double(m_N)},
     m_gps_n_old{9999},
     m_gps_e_old{9999},
     m_gps_Vg_old{9999},
@@ -27,15 +28,15 @@ PositionEKF::~PositionEKF()
 
 void PositionEKF::update(double ts, const uav_msgs::SensorsConstPtr &meas, uav_msgs::State &state)
 {
-    m_ts = ts / double(m_N);
+//    m_ts = ts / double(m_N);
     propagateModel(state);
     measurementUpdate(state, meas);
-    state.pn = m_xhat(0);
-    state.pe = m_xhat(1);
-    state.Vg = m_xhat(2);
+    state.pn  = m_xhat(0);
+    state.pe  = m_xhat(1);
+    state.Vg  = m_xhat(2);
     state.chi = m_xhat(3);
-    state.wn = m_xhat(4);
-    state.we = m_xhat(5);
+    state.wn  = m_xhat(4);
+    state.we  = m_xhat(5);
     state.psi = m_xhat(6);
 }
 
@@ -73,7 +74,7 @@ void PositionEKF::measurementUpdate(uav_msgs::State &state, const uav_msgs::Sens
     m_L_pseudo = m_P*m_C_pseudo.transpose()*temp.inverse();
 
     m_P = (I - m_L_pseudo*m_C_pseudo)*m_P*(I-m_L_pseudo*m_C_pseudo).transpose() + m_L_pseudo*m_R_pseudo*m_L_pseudo.transpose();
-    m_xhat += m_L_pseudo * -m_h_pseudo;
+    m_xhat += m_L_pseudo * (-m_h_pseudo);
 
     if (measurement->gps_n != m_gps_n_old || measurement->gps_e!=m_gps_e_old ||
         measurement->gps_Vg!=m_gps_Vg_old || measurement->gps_chi!=m_gps_chi_old)
@@ -81,11 +82,14 @@ void PositionEKF::measurementUpdate(uav_msgs::State &state, const uav_msgs::Sens
         m_h_gps = h_gps(m_xhat,state);
         updateGpsJacobian(m_xhat,state);
         m_y_gps << measurement->gps_n, measurement->gps_e, measurement->gps_Vg, measurement->gps_chi;
+
         Eigen::Matrix4d temp_gps;
         temp_gps = m_R_gps + m_C_gps*m_P*m_C_gps.transpose();
         m_L_gps = m_P*m_C_gps.transpose()*temp_gps.inverse();
         wrap(m_y_gps(3), m_h_gps(3));
+
         m_P = (I-m_L_gps*m_C_gps)*m_P*(I-m_L_gps*m_C_gps).transpose() + m_L_gps*m_R_gps*m_L_gps.transpose();
+        m_xhat += m_L_gps * (m_y_gps - m_h_gps);
 
         m_gps_n_old = measurement->gps_n;
         m_gps_e_old = measurement->gps_e;
@@ -94,11 +98,11 @@ void PositionEKF::measurementUpdate(uav_msgs::State &state, const uav_msgs::Sens
     }
 }
 
-PositionEKF::Vec7 PositionEKF::f(const PositionEKF::Vec7 &x, const uav_msgs::State &u)
+Vec7 PositionEKF::f(const Vec7 &x, const uav_msgs::State &u)
 {
     static double g{9.80665};
 
-    double psi_d{u.q*sin(u.phi)/cos(u.theta) + u.r*cos(u.phi)/cos(u.theta)};
+    double psi_d{(u.q*sin(u.phi) + u.r*cos(u.phi))/cos(u.theta)};
     double Vg{x(2)};
     double chi{x(3)};
     double wn{x(4)};
@@ -118,13 +122,13 @@ PositionEKF::Vec7 PositionEKF::f(const PositionEKF::Vec7 &x, const uav_msgs::Sta
     return _f;
 }
 
-Eigen::Vector4d PositionEKF::h_gps(const PositionEKF::Vec7 &x, const uav_msgs::State &u)
+Eigen::Vector4d PositionEKF::h_gps(const Vec7 &x, const uav_msgs::State &u)
 {
     m_h_gps << x(0), x(1), x(2), x(3);
     return m_h_gps;
 }
 
-Eigen::Vector2d PositionEKF::h_pseudo(const PositionEKF::Vec7 &x, const uav_msgs::State &u)
+Eigen::Vector2d PositionEKF::h_pseudo(const Vec7 &x, const uav_msgs::State &u)
 {
     double Vg{x(2)};
     double chi{x(3)};
@@ -136,7 +140,7 @@ Eigen::Vector2d PositionEKF::h_pseudo(const PositionEKF::Vec7 &x, const uav_msgs
     return m_h_pseudo;
 }
 
-void PositionEKF::updateJacobianA(const PositionEKF::Vec7 &x, const uav_msgs::State &state)
+void PositionEKF::updateJacobianA(const Vec7 &x, const uav_msgs::State &state)
 {
     Vec7 f_x, f_eps;
     f_x = f(x, state);
@@ -150,7 +154,7 @@ void PositionEKF::updateJacobianA(const PositionEKF::Vec7 &x, const uav_msgs::St
     }
 }
 
-void PositionEKF::updatePseudoJacobian(const PositionEKF::Vec7& x, const uav_msgs::State& state)
+void PositionEKF::updatePseudoJacobian(const Vec7& x, const uav_msgs::State& state)
 {
     Eigen::Vector2d h_pseudo_x;
     h_pseudo_x = h_pseudo(x,state);
@@ -164,7 +168,7 @@ void PositionEKF::updatePseudoJacobian(const PositionEKF::Vec7& x, const uav_msg
     }
 }
 
-void PositionEKF::updateGpsJacobian(const PositionEKF::Vec7& x, const uav_msgs::State& state)
+void PositionEKF::updateGpsJacobian(const Vec7& x, const uav_msgs::State& state)
 {
     Eigen::Vector4d h_gps_x;
     h_gps_x = h_gps(x,state);
