@@ -73,7 +73,7 @@ void PositionEKF::measurementUpdate(uav_msgs::State &state, const uav_msgs::Sens
     temp = m_R_pseudo + m_C_pseudo*m_P*m_C_pseudo.transpose();
     m_L_pseudo = m_P*m_C_pseudo.transpose()*temp.inverse();
 
-    m_P = (I - m_L_pseudo*m_C_pseudo)*m_P*(I-m_L_pseudo*m_C_pseudo).transpose() + m_L_pseudo*m_R_pseudo*m_L_pseudo.transpose();
+    m_P = (I-m_L_pseudo*m_C_pseudo)*m_P*(I-m_L_pseudo*m_C_pseudo).transpose() + m_L_pseudo*m_R_pseudo*m_L_pseudo.transpose();
     m_xhat += m_L_pseudo * (-m_h_pseudo);
 
     if (measurement->gps_n != m_gps_n_old || measurement->gps_e!=m_gps_e_old ||
@@ -109,11 +109,12 @@ Vec7 PositionEKF::f(const Vec7 &x, const uav_msgs::State &u)
     double we{x(5)};
     double psi{x(6)};
 
+    double C_psi{cos(psi)}, S_psi{sin(psi)};
+
     Vec7 _f;
     _f << Vg*cos(chi),
           Vg*sin(chi),
-          ((u.Va*cos(psi)+wn)*(-u.Va*psi_d*sin(psi))+(u.Va*sin(psi)+we)*
-                             (u.Va*psi_d*cos(psi))) / Vg,
+          ((u.Va*C_psi+wn)*(-u.Va*psi_d*S_psi)+(u.Va*S_psi+we)*(u.Va*psi_d*C_psi)) / Vg,
           g/Vg * tan(u.phi)*cos(chi-psi),
           0.0,
           0.0,

@@ -3,6 +3,7 @@
 
 AttitudeEKF::AttitudeEKF() :
     m_N{10},
+    m_ts{.002/double(m_N)},
     m_eps{0.01}
 {
     double deg2rad{3.14159/180.0};
@@ -22,7 +23,7 @@ AttitudeEKF::~AttitudeEKF()
 
 void AttitudeEKF::update(double ts, const uav_msgs::SensorsConstPtr &meas, uav_msgs::State &state)
 {
-    m_ts = ts / double(m_N);
+//    m_ts = ts / double(m_N);
     propagateModel(state);
     measurementUpdate(state, meas);
     state.phi = m_xhat(0);
@@ -74,10 +75,12 @@ Eigen::Vector2d AttitudeEKF::f(const Eigen::Vector2d& x, const uav_msgs::State& 
 Eigen::Vector3d AttitudeEKF::h(const Eigen::Vector2d &x, const uav_msgs::State &u)
 {
     static double g{9.80665};
+
+    double C_theta{cos(x(1))}, S_theta{sin(x(1))};
     Eigen::Vector3d _h;
-    _h << (u.q*u.Va*g)*sin(x(1)),
-            u.r*u.Va*cos(x(1)) - u.p*u.Va*sin(x(1))-g*cos(x(1))*sin(x(0)),
-            -u.q*u.Va*cos(x(1)) - g*cos(x(1))*cos(x(0));
+    _h << (u.q*u.Va+g)*S_theta,
+           u.r*u.Va*C_theta - u.p*u.Va*S_theta-g*C_theta*sin(x(0)),
+          -u.q*u.Va*C_theta - g*C_theta*cos(x(0));
     return _h;
 }
 
