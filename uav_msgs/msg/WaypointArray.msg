@@ -1,7 +1,7 @@
 # waypoint following modes
-uint8 MODE_LINE
-uint8 MODE_FILLET
-uint8 MODE_DUBINS
+uint8 MODE_LINE = 0
+uint8 MODE_FILLET = 1
+uint8 MODE_DUBINS = 2
 
 Header header
 bool waypoints_changed

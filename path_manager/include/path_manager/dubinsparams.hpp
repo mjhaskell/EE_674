@@ -6,7 +6,9 @@
 class DubinsParams
 {
 public:
-    DubinsParams();
+    DubinsParams()
+    {}
+
     bool update(const Eigen::Vector3d& ps, const Eigen::Vector3d& pe,
                 double chis, double chie, double R)
     {
