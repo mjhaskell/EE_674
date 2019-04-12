@@ -1,6 +1,6 @@
 # path modes
-uint8 MODE_LINE = 0
-uint8 MODE_ORBIT = 1
+uint8 MODE_ORBIT = 0
+uint8 MODE_LINE = 1
 
 # orbit directions
 uint8 DIR_CW = 0
