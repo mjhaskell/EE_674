@@ -511,32 +511,6 @@ void MainWindow::on_view_main_toolbar_triggered()
         onToolbarVisibilityChanged(true);
 }
 
-void MainWindow::on_set_waypoint_button_clicked()
-{
-    double north{m_ui->north_spin->value()};
-    double east{m_ui->east_spin->value()};
-    double height{m_ui->height_spin->value()};
-    double yaw_radians{osg::DegreesToRadians(m_ui->yaw_spin->value())};
-    Eigen::Vector4d ref_cmd{north,east,height,yaw_radians};
-}
-
-void MainWindow::on_set_weights_button_clicked()
-{
-//    dyn::xVec state_weights;
-//    state_weights << m_ui->px_spin->value(),m_ui->py_spin->value(),m_ui->pz_spin->value(),
-//                     m_ui->rx_spin->value(),m_ui->ry_spin->value(),m_ui->rz_spin->value(),
-//                     m_ui->vx_spin->value(),m_ui->vy_spin->value(),m_ui->vz_spin->value(),
-//                     m_ui->wx_spin->value(),m_ui->wy_spin->value(),m_ui->wz_spin->value();
-//    dyn::uVec input_weights;
-//    input_weights = input_weights.setOnes(dyn::INPUT_SIZE,1)*m_ui->u_weights_spin->value();
-//    m_controller_node.setWeights(state_weights,input_weights);
-}
-
-void MainWindow::on_set_rates_button_clicked()
-{
-//    m_controller_node.setRates(m_ui->ts_spin->value(),m_ui->slew_spin->value());
-}
-
 void MainWindow::on_pause_triggered()
 {
     startOrPauseSim();
@@ -568,7 +542,7 @@ void MainWindow::on_gust_check_box_toggled(bool checked)
 }
 
 void MainWindow::on_default_waypoints_button_clicked()
-{
+{  
     int mode;
     if (m_ui->line_radio->isChecked())
         mode = uav_msgs::Map::MODE_LINE;
@@ -577,6 +551,7 @@ void MainWindow::on_default_waypoints_button_clicked()
     else
         mode = uav_msgs::Map::MODE_DUBINS;
 
+    m_osg_widget->plotDefaultWaypoints();
     m_drone_node.sendDefaultWaypoints(mode);
 }
 

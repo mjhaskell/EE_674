@@ -21,6 +21,7 @@ public:
   OSGWidget(QWidget* parent = 0,Qt::WindowFlags f = 0);
   virtual ~OSGWidget();
   void resetManipulatorView();
+  void plotDefaultWaypoints();
 
 public slots:
   void updateDroneStates(fixedwing::State* state);
@@ -53,6 +54,7 @@ private:
   void setupView(osg::Camera* camera);
   void setupViewer();
   void setupCameraAndView();
+  void drawDefaultWaypoints();
   osg::ref_ptr<osg::Node> createFloor();
   osg::ref_ptr<osg::Node> createOrigin(osg::Vec3d &scale_factor);
   void insertGround();

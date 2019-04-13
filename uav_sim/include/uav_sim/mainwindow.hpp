@@ -68,9 +68,6 @@ private slots:
     void on_subscribe_button_clicked();
     void on_reset_triggered();
     void on_view_main_toolbar_triggered();
-    void on_set_waypoint_button_clicked();
-    void on_set_weights_button_clicked();
-    void on_set_rates_button_clicked();
     void on_pause_triggered();
     void on_wn_spin_valueChanged(double value);
     void on_we_spin_valueChanged(double arg1);

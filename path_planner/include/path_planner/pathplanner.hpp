@@ -10,11 +10,10 @@ class PathPlanner
 public:
     PathPlanner();
     virtual ~PathPlanner();
-    void publishWaypoints();
 
 protected:
     void mapCallback(const uav_msgs::MapConstPtr& msg);
-    void setupWaypoints();
+    void setupDefaultWaypoints(int mode);
 
 private:
     ros::NodeHandle m_nh;

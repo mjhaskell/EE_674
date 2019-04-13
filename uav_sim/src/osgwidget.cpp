@@ -47,7 +47,7 @@ OSGWidget::OSGWidget(QWidget* parent,Qt::WindowFlags flags):
     this->setupCameraAndView();
     this->setupEnvironment();
 
-    double drone_radius{1.0};
+    double drone_radius{10.0};
     osg::ref_ptr<osg::PositionAttitudeTransform> drone_pat{new osg::PositionAttitudeTransform};
     drone_pat->setUpdateCallback(m_drone_update_callback);
     osg::ref_ptr<osg::PositionAttitudeTransform> drone_node{this->createDrone(drone_radius)};
@@ -70,6 +70,11 @@ OSGWidget::~OSGWidget()
 void OSGWidget::resetManipulatorView()
 {
     m_drone_update_callback->resetManipulator();
+}
+
+void OSGWidget::plotDefaultWaypoints()
+{
+    drawDefaultWaypoints();
 }
 
 void OSGWidget::updateDroneStates(fixedwing::State* state)
@@ -247,12 +252,12 @@ void OSGWidget::setupManipulators(osg::ref_ptr<osg::PositionAttitudeTransform> t
 {
     m_manipulator->setAllowThrow(false);
 
-    osgGA::NodeTrackerManipulator::TrackerMode track_mode{osgGA::NodeTrackerManipulator::NODE_CENTER};
+    osgGA::NodeTrackerManipulator::TrackerMode track_mode{osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM};
     m_manipulator->setTrackerMode(track_mode);
     osgGA::NodeTrackerManipulator::RotationMode rot_mode{osgGA::NodeTrackerManipulator::TRACKBALL};
     m_manipulator->setRotationMode(rot_mode);
 
-    osg::Vec3d eye{-5.0,0,-1.0};
+    osg::Vec3d eye{-15.0,0,-1.0};
     osg::Vec3d center{0,0,0};
     osg::Vec3d up{0,0,-1};
     m_manipulator->setHomePosition(eye,center,up);
@@ -332,14 +337,53 @@ void OSGWidget::setupCameraAndView()
     this->setupViewer();
 }
 
+void OSGWidget::drawDefaultWaypoints()
+{
+    osg::Vec3 origin{0,0,0};
+    float radius{1.0};
+    osg::Vec4 red{1,0,0,1};
+    std::string name{"Sphere"};
+    osg::Sphere *sphere{new osg::Sphere{origin,radius}};
+    osg::ShapeDrawable *sd{new osg::ShapeDrawable{sphere}};
+    sd->setColor(red);
+    sd->setName(name);
+
+    osg::Geode *geode{new osg::Geode};
+    geode->addDrawable(sd);
+    osg::Material *material{new osg::Material};
+    material->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+    osg::StateSet *state_set{geode->getOrCreateStateSet()};
+    state_set->setAttributeAndModes(material, osg::StateAttribute::ON);
+    state_set->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+
+    osg::PositionAttitudeTransform *wpt1{new osg::PositionAttitudeTransform};
+    wpt1->setPosition(osg::Vec3{0,0,-50});
+    wpt1->addChild(geode);
+    osg::PositionAttitudeTransform *wpt2{new osg::PositionAttitudeTransform};
+    wpt2->setPosition(osg::Vec3{1000,0,-50});
+    wpt2->addChild(geode);
+    osg::PositionAttitudeTransform *wpt3{new osg::PositionAttitudeTransform};
+    wpt3->setPosition(osg::Vec3{0,1000,-50});
+    wpt3->addChild(geode);
+    osg::PositionAttitudeTransform *wpt4{new osg::PositionAttitudeTransform};
+    wpt4->setPosition(osg::Vec3{1000,1000,-50});
+    wpt4->addChild(geode);
+
+    m_root->addChild(wpt1);
+    m_root->addChild(wpt2);
+    m_root->addChild(wpt3);
+    m_root->addChild(wpt4);
+    this->update();
+}
+
 osg::ref_ptr<osg::Vec3Array> getFloorVertices(float x, float y)
 {
     float z{-0.01f};
     osg::ref_ptr<osg::Vec3Array> vertices{new osg::Vec3Array};
-    vertices->push_back(osg::Vec3(-x, -y, z));
-    vertices->push_back(osg::Vec3(-x,  y, z));
-    vertices->push_back(osg::Vec3(x,   y, z));
-    vertices->push_back(osg::Vec3(x,  -y, z));
+    vertices->push_back(osg::Vec3(-x/2.0, -y/2.0, z));
+    vertices->push_back(osg::Vec3(-x/2.0,  y+y/2.0, z));
+    vertices->push_back(osg::Vec3(x+x/2.0,   y+y/2.0, z));
+    vertices->push_back(osg::Vec3(x+x/2.0,  -y/2.0, z));
     return vertices;
 }
 
@@ -369,8 +413,8 @@ osg::Geometry* createFloorGeom()
 {
     osg::Geometry *geom{new osg::Geometry};
 
-    float x_dim{100.f};
-    float y_dim{100.f};
+    float x_dim{1000.f};
+    float y_dim{1000.f};
     osg::ref_ptr<osg::Vec3Array> vertices{getFloorVertices(x_dim,y_dim)};
     geom->setVertexArray(vertices);
 
@@ -453,7 +497,7 @@ void OSGWidget::insertGround()
     osg::ref_ptr<osg::Node> floor{this->createFloor()};
     m_root->addChild(floor);
 
-    osg::Vec3d scale_factor{1,1,1};
+    osg::Vec3d scale_factor{10,10,10};
     osg::ref_ptr<osg::Node> origin_pat{this->createOrigin(scale_factor)};
     m_root->addChild(origin_pat);
 }
@@ -478,20 +522,27 @@ void OSGWidget::insertStructures()
 
 void OSGWidget::insertClouds()
 {
-    double cloud_radius{50.0};
+    double cloud_radius{90.0};
     osg::ref_ptr<osg::Node> cloud{this->createCloud(cloud_radius)};
-    int num_clouds{9};
+    int num_clouds{15};
     osg::ref_ptr<osg::PositionAttitudeTransform> cloud_pat[num_clouds];
     osg::Vec3d cloud_pos[num_clouds];
-    cloud_pos[0] = osg::Vec3d{-200,-150,-150};
-    cloud_pos[1] = osg::Vec3d{-150,150,-140};
-    cloud_pos[2] = osg::Vec3d{150,-150,-160};
-    cloud_pos[3] = osg::Vec3d{150,150,-170};
-    cloud_pos[4] = osg::Vec3d{-100,-50,-140};
-    cloud_pos[5] = osg::Vec3d{50,200,-150};
-    cloud_pos[6] = osg::Vec3d{250,0,-130};
-    cloud_pos[7] = osg::Vec3d{0,-250,-160};
-    cloud_pos[8] = osg::Vec3d{0,0,-170};
+    double nom_z{-500};
+    cloud_pos[0] = osg::Vec3d{-800,2250,nom_z};
+    cloud_pos[1] = osg::Vec3d{1050,2350,nom_z+20};
+    cloud_pos[2] = osg::Vec3d{550,2500,nom_z-20};
+    cloud_pos[3] = osg::Vec3d{150,-1900,nom_z-40};
+    cloud_pos[4] = osg::Vec3d{950,-1900,nom_z+20};
+    cloud_pos[5] = osg::Vec3d{-1900,700,nom_z};
+    cloud_pos[6] = osg::Vec3d{2450,-400,nom_z+40};
+    cloud_pos[7] = osg::Vec3d{-350,2450,nom_z-20};
+    cloud_pos[8] = osg::Vec3d{-800,-1900,nom_z-40};
+    cloud_pos[9] = osg::Vec3d{-1500,-1500,nom_z+40};
+    cloud_pos[10] = osg::Vec3d{2000,-1500,nom_z+30};
+    cloud_pos[11] = osg::Vec3d{2000,2000,nom_z+20};
+    cloud_pos[12] = osg::Vec3d{-1500,2000,nom_z+30};
+    cloud_pos[13] = osg::Vec3d{2500,550,nom_z+40};
+    cloud_pos[14] = osg::Vec3d{-1900,-200,nom_z+40};
     for (int i{0}; i < num_clouds; i++)
     {
         cloud_pat[i] = new osg::PositionAttitudeTransform;

@@ -15,6 +15,12 @@
     <node name="path_follower" pkg="path_follower" type="path_follower">
     </node>
 
+    <node name="path_manager" pkg="path_manager" type="path_manager">
+    </node>
+
+    <node name="path_planner" pkg="path_planner" type="path_planner">
+    </node>
+
     <node name="plots" pkg="plotter" type="plotter.py" output="screen">
     </node>
 
