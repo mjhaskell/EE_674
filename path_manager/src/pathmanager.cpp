@@ -41,10 +41,10 @@ void PathManager::stateCallback(const uav_msgs::StateConstPtr& msg)
         ROS_WARN("[path_manager] No waypoints received. Requesting new waypoints.");
         return;
     }
-    else if (m_num_waypoints == 1)
-        int a{0};
-    else if (m_num_waypoints == 2)
-        int b{0};
+//    else if (m_num_waypoints == 1)
+//        int a{0};
+//    else if (m_num_waypoints == 2)
+//        int b{0};
 
 
     if (m_wpts.mode == uav_msgs::WaypointArray::MODE_LINE)
@@ -90,7 +90,7 @@ void PathManager::lineManager(const uav_msgs::StateConstPtr &state)
     m_path_msg.airspeed = m_wpts.waypoints[m_ptr_cur].airspeed;
     m_path_msg.mode = uav_msgs::Path::MODE_LINE;
 
-    if (inHalfSpace(m_p))
+    if (inHalfSpace())
     {
         incrementPtrs();
         m_path_msg.path_changed = true;
@@ -148,7 +148,7 @@ void PathManager::filletManager(const uav_msgs::StateConstPtr &state)
         m_halfspace_r = m_w_i - (m_R_min/tan(var_phi/2.0))*m_q_im1;
         m_halfspace_n = m_q_im1;
 
-        if (inHalfSpace(m_p))
+        if (inHalfSpace())
         {
             m_manager_state = 2;
             m_state_changed = true;
@@ -178,7 +178,7 @@ void PathManager::filletManager(const uav_msgs::StateConstPtr &state)
         m_halfspace_r = m_w_i + (m_R_min/tan(var_phi/2.0))*m_q_i;
         m_halfspace_n = m_q_i;
 
-        if (inHalfSpace(m_p))
+        if (inHalfSpace())
         {
             incrementPtrs();
             m_manager_state = 1;
@@ -190,6 +190,109 @@ void PathManager::filletManager(const uav_msgs::StateConstPtr &state)
 void PathManager::dubinsManager(const uav_msgs::StateConstPtr &state)
 {
     m_p << state->pn, state->pe, -state->h;
+    m_path_msg.airspeed = m_wpts.waypoints[m_ptr_cur].airspeed;
+
+    uav_msgs::Waypoint wpt;
+    if (m_ptrs_updated)
+    {
+        m_ptrs_updated = false;
+        double chis, chie;
+        wpt = m_wpts.waypoints[m_ptr_prev];
+        m_w_im1 << wpt.ned.x, wpt.ned.y, wpt.ned.z;
+        chis = wpt.chi;
+        wpt = m_wpts.waypoints[m_ptr_cur];
+        m_w_i << wpt.ned.x, wpt.ned.y, wpt.ned.z;
+        chie = wpt.chi;
+
+        m_dubins_path.update(m_w_im1,m_w_i,chis,chie,m_R_min);
+    }
+
+    if (m_manager_state == 1)
+    {
+        m_path_msg.path_changed = m_state_changed;
+        m_state_changed = false;
+        m_path_msg.mode = uav_msgs::Path::MODE_ORBIT;
+        m_path_msg.orbit_center.x = m_dubins_path.m_center_s(0);
+        m_path_msg.orbit_center.y = m_dubins_path.m_center_s(1);
+        m_path_msg.orbit_center.z = m_dubins_path.m_center_s(2);
+        m_path_msg.orbit_radius = m_R_min;
+        if (m_dubins_path.m_dir_s > 0)
+            m_path_msg.orbit_direction = uav_msgs::Path::DIR_CW;
+        else
+            m_path_msg.orbit_direction = uav_msgs::Path::DIR_CCW;
+
+        m_halfspace_n = m_dubins_path.m_n1;
+        m_halfspace_r = m_dubins_path.m_r1;
+        if (inHalfSpace())
+        {
+            m_manager_state = 2;
+            m_state_changed = true;
+        }
+    }
+    else if (m_manager_state == 2)
+    {
+        m_halfspace_n = m_dubins_path.m_n1;
+        m_halfspace_r = m_dubins_path.m_r1;
+        if (inHalfSpace())
+        {
+            m_manager_state = 3;
+            m_state_changed = true;
+        }
+    }
+    else if (m_manager_state == 3)
+    {
+        m_path_msg.path_changed = m_state_changed;
+        m_state_changed = false;
+        m_path_msg.mode = uav_msgs::Path::MODE_LINE;
+        m_path_msg.line_origin.x = m_dubins_path.m_r1(0);
+        m_path_msg.line_origin.y = m_dubins_path.m_r1(1);
+        m_path_msg.line_origin.z = m_dubins_path.m_r1(2);
+        m_path_msg.line_direction.x = m_dubins_path.m_n1(0);
+        m_path_msg.line_direction.y = m_dubins_path.m_n1(1);
+        m_path_msg.line_direction.z = m_dubins_path.m_n1(2);
+
+        m_halfspace_n = m_dubins_path.m_n1;
+        m_halfspace_r = m_dubins_path.m_r2;
+        if (inHalfSpace())
+        {
+            m_manager_state = 4;
+            m_state_changed = true;
+        }
+    }
+    else if (m_manager_state == 4)
+    {
+        m_path_msg.path_changed = m_state_changed;
+        m_state_changed = false;
+        m_path_msg.mode = uav_msgs::Path::MODE_ORBIT;
+        m_path_msg.orbit_center.x = m_dubins_path.m_center_e(0);
+        m_path_msg.orbit_center.y = m_dubins_path.m_center_e(1);
+        m_path_msg.orbit_center.z = m_dubins_path.m_center_e(2);
+        if (m_dubins_path.m_dir_e > 0)
+            m_path_msg.orbit_direction = uav_msgs::Path::DIR_CW;
+        else
+            m_path_msg.orbit_direction = uav_msgs::Path::DIR_CCW;
+
+        m_halfspace_n = m_dubins_path.m_n3;
+        m_halfspace_r = m_dubins_path.m_r3;
+        if (inHalfSpace())
+        {
+            m_manager_state = 5;
+            m_state_changed = true;
+        }
+    }
+    else
+    {
+        m_path_msg.path_changed = m_state_changed;
+        m_state_changed = false;
+        m_halfspace_n = m_dubins_path.m_n3;
+        m_halfspace_r = m_dubins_path.m_r3;
+        if (inHalfSpace())
+        {
+            m_manager_state = 1;
+            m_state_changed = true;
+            incrementPtrs();
+        }
+    }
 }
 
 void PathManager::initializePtrs()
@@ -211,9 +314,9 @@ void PathManager::incrementPtrs()
     m_ptrs_updated = true;
 }
 
-bool PathManager::inHalfSpace(const Eigen::Vector3d& pos)
+bool PathManager::inHalfSpace()
 {
-    if ((pos - m_halfspace_r).transpose() * m_halfspace_n >= 0)
+    if ((m_p - m_halfspace_r).transpose() * m_halfspace_n >= 0)
         return true;
     else
         return false;

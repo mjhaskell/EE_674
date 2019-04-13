@@ -22,7 +22,7 @@ protected:
     void dubinsManager(const uav_msgs::StateConstPtr& state);
     void initializePtrs();
     void incrementPtrs();
-    bool inHalfSpace(const Eigen::Vector3d& pos);
+    bool inHalfSpace();
 
 private:
     ros::NodeHandle m_nh;
