@@ -18,6 +18,8 @@ add_message_files(
   Waypoint.msg
   WaypointArray.msg
   Path.msg
+  Building.msg
+  Map.msg
 )
 
 #add_service_files(
