@@ -473,34 +473,23 @@
          <string>Wind</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_13">
-         <item row="2" column="0" colspan="2">
-          <widget class="QCheckBox" name="gust_check_box">
-           <property name="text">
-            <string>Use wind gusts</string>
+         <item row="1" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="title">
+            <string>Gust Wind</string>
            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QCheckBox" name="gust_check_box">
+              <property name="text">
+               <string>Use wind gusts</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QDoubleSpinBox" name="wn_spin"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="we_spin"/>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_17">
-           <property name="text">
-            <string>East Wind:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_16">
-           <property name="text">
-            <string>North Wind:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
+         <item row="2" column="0">
           <spacer name="verticalSpacer_5">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -513,6 +502,35 @@
            </property>
           </spacer>
          </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Steady State Wind</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_16">
+              <property name="text">
+               <string>North Wind:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="wn_spin"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>East Wind:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="we_spin"/>
+            </item>
+           </layout>
+          </widget>
+         </item>
         </layout>
        </widget>
        <widget class="QWidget" name="nav_tab">
@@ -520,7 +538,7 @@
          <string>Navigation</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_7">
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QGroupBox" name="ref_cmd_group">
            <property name="maximumSize">
             <size>
@@ -529,91 +547,27 @@
             </size>
            </property>
            <property name="title">
-            <string>Reference Commands</string>
+            <string>Path Planner</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_8">
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_9">
+            <item row="0" column="0" colspan="2">
+             <widget class="QPushButton" name="default_waypoints_button">
               <property name="text">
-               <string>Yaw:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="north_spin">
-              <property name="minimum">
-               <double>-50.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="text">
-               <string>Height:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="yaw_spin">
-              <property name="minimum">
-               <double>-360.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>360.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QDoubleSpinBox" name="height_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>3.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>North:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="east_spin">
-              <property name="minimum">
-               <double>-50.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>50.000000000000000</double>
+               <string>Default Waypoints</string>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_7">
+             <widget class="QPushButton" name="generate_map_button">
               <property name="text">
-               <string>East:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" colspan="2">
-             <widget class="QPushButton" name="set_waypoint_button">
-              <property name="text">
-               <string>Set Waypoint</string>
+               <string>Generate Map</string>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <spacer name="verticalSpacer_4">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
@@ -621,242 +575,41 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>10</height>
             </size>
            </property>
           </spacer>
          </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tune_tab">
-        <attribute name="title">
-         <string>Tuning</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_9">
          <item row="0" column="0">
-          <widget class="QGroupBox" name="weights_group">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>220</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
+          <widget class="QGroupBox" name="groupBox">
            <property name="title">
-            <string>Weights</string>
+            <string>Path Manager</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_10">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMinimumSize</enum>
-            </property>
-            <property name="leftMargin">
-             <number>5</number>
-            </property>
-            <property name="topMargin">
-             <number>5</number>
-            </property>
-            <property name="rightMargin">
-             <number>5</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item row="1" column="2">
-             <widget class="QDoubleSpinBox" name="py_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="1" colspan="3">
-             <widget class="Line" name="line_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="3">
-             <widget class="QDoubleSpinBox" name="wz_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QDoubleSpinBox" name="wx_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QDoubleSpinBox" name="px_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>10.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="3">
-             <widget class="QDoubleSpinBox" name="u_weights_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QDoubleSpinBox" name="vz_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
-             <widget class="QDoubleSpinBox" name="wy_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1" colspan="3">
-             <widget class="QLabel" name="label_12">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QRadioButton" name="line_radio">
               <property name="text">
-               <string>Angular Velocity:</string>
+               <string>Straight Lines</string>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="4" column="1" colspan="3">
-             <widget class="QLabel" name="label_11">
+            <item>
+             <widget class="QRadioButton" name="fillet_radio">
               <property name="text">
-               <string>Velocity:</string>
+               <string>Fillet</string>
               </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QDoubleSpinBox" name="vx_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.800000000000000</double>
+              <property name="checked">
+               <bool>false</bool>
               </property>
              </widget>
             </item>
-            <item row="5" column="2">
-             <widget class="QDoubleSpinBox" name="vy_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>0.800000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QDoubleSpinBox" name="rx_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>2.500000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" colspan="3">
-             <widget class="QLabel" name="label_10">
+            <item>
+             <widget class="QRadioButton" name="dubins_radio">
               <property name="text">
-               <string>Attitude:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="3">
-             <widget class="QDoubleSpinBox" name="pz_spin">
-              <property name="maximum">
-               <double>250.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>100.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QDoubleSpinBox" name="rz_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>2.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QDoubleSpinBox" name="ry_spin">
-              <property name="maximum">
-               <double>50.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>2.500000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="1" colspan="2">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>Motor Inputs:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" colspan="3">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Position:</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="2" colspan="2">
-             <widget class="QPushButton" name="set_weights_button">
-              <property name="text">
-               <string>Set Weights</string>
+               <string>Dubins</string>
               </property>
              </widget>
             </item>
