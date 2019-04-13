@@ -4,9 +4,10 @@ PathPlanner::PathPlanner() :
     m_nh{ros::NodeHandle()},
     m_nh_private{"~"}
 {
-    setupWaypoints();
+    setupDefaultWaypoints();
 
     uint32_t queue_size{5};
+    m_map_sub = m_nh.subscribe("command/map",queue_size,&PathPlanner::mapCallback,this);
     m_wpts_pub = m_nh.advertise<uav_msgs::WaypointArray>("command/waypoints",queue_size);
 }
 
@@ -19,12 +20,23 @@ void PathPlanner::publishWaypoints()
         m_wpts_pub.publish(m_wpts_msg);
 }
 
+void PathPlanner::mapCallback(const uav_msgs::MapConstPtr &msg)
+{
+    if (!msg->map_changed)
+        return;
+    if (msg->use_default_waypoints)
+    {
+        setupDefaultWaypoints();
+        m_wpts_pub.publish(m_wpts_msg);
+    }
+}
+
 float rad(double degree)
 {
     return degree * 3.14159/180.0;
 }
 
-void PathPlanner::setupWaypoints()
+void PathPlanner::setupDefaultWaypoints()
 {
     float Va{25.0};
 

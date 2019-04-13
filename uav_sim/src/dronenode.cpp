@@ -143,6 +143,14 @@ void DroneNode::setUseGust(const bool use)
     m_drone.setUseGust(use);
 }
 
+void DroneNode::sendDefaultWaypoints(int mode)
+{
+    m_map_msg.mode = mode;
+    m_map_msg.map_changed = true;
+    m_map_msg.use_default_waypoints = true;
+    m_map_pub.publish(m_map_msg);
+}
+
 void DroneNode::runRosNode()
 {
     ros::Rate publish_rate{500};
@@ -189,6 +197,7 @@ void DroneNode::setupRosComms(const std::string topic)
     m_state_pub = nh.advertise<uav_msgs::State>("states/truth", queue_size);
     m_status_pub = nh.advertise<uav_msgs::Status>("sim/status", queue_size);
     m_sensors_pub = nh.advertise<uav_msgs::Sensors>("/sensors", queue_size);
+    m_map_pub = nh.advertise<uav_msgs::Map>("command/map", queue_size);
 }
 
 void DroneNode::updateStateMsg()

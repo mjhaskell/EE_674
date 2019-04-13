@@ -52,9 +52,6 @@ public slots:
     void closeWithWarning();
 
 private slots:
-    void on_gust_check_box_toggled(bool checked);
-
-private slots:
     void on_start_triggered();
     void on_close_triggered();
     void on_roscore_button_clicked();
@@ -77,6 +74,9 @@ private slots:
     void on_pause_triggered();
     void on_wn_spin_valueChanged(double value);
     void on_we_spin_valueChanged(double arg1);
+    void on_gust_check_box_toggled(bool checked);
+    void on_default_waypoints_button_clicked();
+    void on_generate_map_button_clicked();
 
 private:
     Ui::MainWindow *m_ui{nullptr};

@@ -566,3 +566,29 @@ void MainWindow::on_gust_check_box_toggled(bool checked)
 {
     m_drone_node.setUseGust(checked);
 }
+
+void MainWindow::on_default_waypoints_button_clicked()
+{
+    int mode;
+    if (m_ui->line_radio->isChecked())
+        mode = uav_msgs::Map::MODE_LINE;
+    else if (m_ui->fillet_radio->isChecked())
+        mode = uav_msgs::Map::MODE_FILLET;
+    else
+        mode = uav_msgs::Map::MODE_DUBINS;
+
+    m_drone_node.sendDefaultWaypoints(mode);
+}
+
+void MainWindow::on_generate_map_button_clicked()
+{
+    int mode;
+    if (m_ui->line_radio->isChecked())
+        mode = uav_msgs::Map::MODE_LINE;
+    else if (m_ui->fillet_radio->isChecked())
+        mode = uav_msgs::Map::MODE_FILLET;
+    else
+        mode = uav_msgs::Map::MODE_DUBINS;
+
+//    m_drone_node.sendMap(mode);
+}

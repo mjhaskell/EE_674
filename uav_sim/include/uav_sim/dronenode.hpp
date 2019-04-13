@@ -7,6 +7,7 @@
 #include "uav_msgs/State.h"
 #include "uav_msgs/Delta.h"
 #include "uav_msgs/Sensors.h"
+#include "uav_msgs/Map.h"
 
 namespace uav
 {
@@ -30,6 +31,7 @@ public:
     void setupRosComms(const std::string topic="/command/delta");
     void updateWind(const Eigen::Vector3d& wind);
     void setUseGust(const bool use);
+    void sendDefaultWaypoints(int mode);
 
 signals:
     void feedbackStates(const dyn::State* states);
@@ -62,8 +64,10 @@ private:
     ros::Publisher m_state_pub;
     ros::Publisher m_status_pub;
     ros::Publisher m_sensors_pub;
+    ros::Publisher m_map_pub;
     bool m_ros_is_connected;
     bool m_is_running;
+    uav_msgs::Map m_map_msg;
 };
 
 } // end namespace quad
