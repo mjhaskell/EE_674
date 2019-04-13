@@ -75,6 +75,7 @@ void OSGWidget::resetManipulatorView()
 void OSGWidget::plotDefaultWaypoints()
 {
     drawDefaultWaypoints();
+    drawDefaultLines();
 }
 
 void OSGWidget::updateDroneStates(fixedwing::State* state)
@@ -374,6 +375,11 @@ void OSGWidget::drawDefaultWaypoints()
     m_root->addChild(wpt3);
     m_root->addChild(wpt4);
     this->update();
+}
+
+void OSGWidget::drawDefaultLines()
+{
+
 }
 
 osg::ref_ptr<osg::Vec3Array> getFloorVertices(float x, float y)

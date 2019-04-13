@@ -55,6 +55,7 @@ private:
   void setupViewer();
   void setupCameraAndView();
   void drawDefaultWaypoints();
+  void drawDefaultLines();
   osg::ref_ptr<osg::Node> createFloor();
   osg::ref_ptr<osg::Node> createOrigin(osg::Vec3d &scale_factor);
   void insertGround();
