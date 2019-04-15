@@ -7,7 +7,7 @@ PathFollower::PathFollower() :
     m_gravity{9.80665}
 {
     m_chi_inf = m_nh_private.param<double>("chi_inf", 80*3.14159/180.0);
-    m_k_path = m_nh_private.param<double>("k_path", 0.01);
+    m_k_path = m_nh_private.param<double>("k_path", 0.015);
     m_k_orbit = m_nh_private.param<double>("k_orbit", 2.5);
 
     this->initializePathMsg();

@@ -46,6 +46,12 @@ void Autopilot::cmdCallback(const uav_msgs::CommandConstPtr& msg)
     m_phi_ff = msg->phi_ff;
 }
 
+void saturate(double& val, double min, double max)
+{
+    val = (val > max) ? max : val;
+    val = (val < min) ? min : val;
+}
+
 void Autopilot::stateCallback(const uav_msgs::StateConstPtr& msg)
 {
     if (m_is_running)
@@ -62,7 +68,8 @@ void Autopilot::stateCallback(const uav_msgs::StateConstPtr& msg)
             return;    
         
         // lateral autopilot update
-        double phi_c{m_roll_from_course.update(m_chi_c,msg->chi,dt,true)};
+        double phi_c{m_roll_from_course.update(m_chi_c,msg->chi,dt,true)+m_phi_ff};
+        saturate(phi_c,-rad(30),rad(30));
         m_cmd.da = m_aileron_from_roll.update(phi_c,msg->phi,msg->p,dt);
         m_cmd.dr = m_yaw_damper.update(msg->r,dt);
 

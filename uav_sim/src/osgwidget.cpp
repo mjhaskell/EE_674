@@ -379,7 +379,30 @@ void OSGWidget::drawDefaultWaypoints()
 
 void OSGWidget::drawDefaultLines()
 {
+    osg::Vec3Array* v{new osg::Vec3Array};
+    v->resize(4);
+    (*v)[0].set(0, 0, -50);
+    (*v)[1].set(1000, 0, -50);
+    (*v)[2].set(0, 1000, -50);
+    (*v)[3].set(1000, 1000, -50);
 
+    osg::Geometry* geom{new osg::Geometry};
+    geom->setUseDisplayList(false);
+    geom->setVertexArray(v);
+
+    osg::Vec4Array* c{new osg::Vec4Array};
+    c->push_back(osg::Vec4{1,0,0,1});
+    geom->setColorArray(c, osg::Array::BIND_OVERALL);
+
+    GLushort idxLines[4] = {0, 1, 2, 3};
+    geom->addPrimitiveSet(new osg::DrawElementsUShort(osg::PrimitiveSet::LINE_LOOP, 4, idxLines));
+    osg::Geode* geode{new osg::Geode};
+    geode->addDrawable(geom);
+    geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::PROTECTED);
+    geode->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, osg::StateAttribute::ON);
+    osg::PositionAttitudeTransform* transform{new osg::PositionAttitudeTransform};
+    transform->addChild(geode);
+    m_root->addChild(transform);
 }
 
 osg::ref_ptr<osg::Vec3Array> getFloorVertices(float x, float y)
